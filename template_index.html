@@ -1,0 +1,2522 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="g3d.page_title">EVA Mars Explorer — 3D Planetary Globe & Astronaut Survival System</title>
+  <link rel="icon" type="image/png" href="./data/Icon/Icon-Photoroom.png?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <script src="./geospatial/i18n.js"></script>
+  <script src="./geospatial/theme.js"></script>
+  <style>
+    /* EVA Branding Typography (3D Globe Vertical Stack) */
+    .eva-brand-3d {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      line-height: 1;
+      user-select: none;
+      padding: 1px 0;
+    }
+    .brand-eva-wordmark {
+      font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+      font-weight: 900;
+      font-size: 1.75rem;
+      line-height: 0.92;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: block;
+    }
+    .brand-sub-line {
+      font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+      font-weight: 800;
+      font-size: 0.58rem;
+      line-height: 1.15;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      display: block;
+      margin-top: 2px;
+      padding-left: 1px;
+    }
+    .brand-sub-line + .brand-sub-line {
+      letter-spacing: 0.14em;
+      color: var(--text-secondary);
+      margin-top: 1px;
+    }
+    /* Language Switcher (ENG | VIE) */
+    .eva-lang-switch {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(var(--bg-panel-rgb), 0.9);
+      border: 1px solid rgba(var(--text-secondary-rgb), 0.28);
+      border-radius: 0.5rem;
+      padding: 2px;
+      gap: 2px;
+      box-shadow: var(--panel-shadow);
+    }
+    .eva-lang-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 3px 8px;
+      border-radius: 0.375rem;
+      color: var(--text-secondary);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      line-height: 1.2;
+    }
+    .eva-lang-btn:hover {
+      color: var(--text-primary);
+      background: var(--bg-hover);
+    }
+    .eva-lang-btn.active {
+      color: var(--accent-contrast-text);
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      box-shadow: 0 1px 6px var(--accent-glow);
+    }
+    html, body {
+      overscroll-behavior: none;
+    }
+    body {
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      user-select: none;
+    }
+    html.app-immersive {
+      height: 100%;
+      overflow: hidden;
+      overscroll-behavior: none;
+    }
+    html.app-immersive body {
+      height: 100vh;
+      height: 100dvh;
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior-y: none;
+    }
+    html.ios-app-immersive {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      z-index: 9999;
+      overflow: hidden;
+    }
+    .fullscreen-lock-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(var(--bg-canvas-rgb), 0.82);
+    }
+    .fullscreen-lock-overlay[hidden] {
+      display: none;
+    }
+    .fullscreen-lock-overlay button {
+      padding: 0.75rem 1.25rem;
+      border: 1px solid rgba(var(--accent-rgb), 0.65);
+      border-radius: 0.75rem;
+      background: var(--accent-primary);
+      color: var(--accent-contrast-text);
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-panel {
+      background: rgba(var(--bg-panel-rgb), 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--panel-shadow);
+    }
+    .glass-panel-subtle {
+      background: rgba(var(--bg-panel-rgb), 0.65);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-subtle);
+    }
+    input[type=range] {
+      -webkit-appearance: none;
+      background: rgba(var(--text-secondary-rgb), 0.25);
+      height: 5px;
+      border-radius: 9999px;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.9);
+      transition: all 0.15s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+      background: var(--accent-primary);
+    }
+    #space-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .layer-tab {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .layer-tab.active {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: var(--accent-contrast-text);
+      box-shadow: 0 0 16px rgba(var(--accent-rgb), 0.35);
+    }
+    .landmark-pin {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      pointer-events: auto;
+      cursor: pointer;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      z-index: 15;
+    }
+    .landmark-pin:hover {
+      transform: translate(-50%, -108%) scale(1.1);
+      z-index: 30;
+    }
+    .selected-marker {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 25;
+      transition: transform 0.08s ease;
+    }
+    .mcs-pin {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      border: 1px solid var(--accent-telemetry);
+      pointer-events: auto;
+      cursor: pointer;
+      box-shadow: 0 0 6px var(--accent-glow);
+      z-index: 12;
+      transition: transform 0.15s ease;
+    }
+    .mcs-pin:hover {
+      transform: translate(-50%, -50%) scale(2.0);
+      background: var(--accent-telemetry);
+      z-index: 28;
+    }
+    /* Status banner styles */
+    .status-safe {
+      background: var(--status-safe-bg);
+      border-color: var(--status-safe-border);
+      color: var(--status-safe-text);
+    }
+    .status-uncertain {
+      background: var(--status-caution-bg);
+      border-color: var(--status-caution-border);
+      color: var(--status-caution-text);
+    }
+    .status-dangerous {
+      background: var(--status-danger-bg);
+      border-color: var(--status-danger-border);
+      color: var(--status-danger-text);
+    }
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(var(--bg-panel-rgb), 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(var(--text-secondary-rgb), 0.35);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(var(--accent-rgb), 0.5);
+    }
+  </style>
+  <link rel="stylesheet" href="./geospatial/martian_theme.css">
+</head>
+<body class="min-h-screen flex flex-col selection:bg-accent-hover selection:text-accent-contrast">
+  <canvas id="space-bg"></canvas>
+
+  <!-- TOP HEADER -->
+  <header class="relative z-20 border-b border-subtle glass-panel px-4 py-2 flex flex-wrap items-center justify-between gap-3">
+    <!-- Brand: Vertical 3-Line Stack (EVA / MARS / EXPLORER ONLY) -->
+    <div id="brandHeader3D" class="eva-brand-3d" aria-label="EVA MARS EXPLORER">
+      <span class="brand-eva-wordmark eva-wordmark">EVA</span>
+      <span class="brand-sub-line">MARS</span>
+      <span class="brand-sub-line">EXPLORER</span>
+    </div>
+
+    <!-- Search, Navigation & Language Tools -->
+    <div class="flex items-center gap-2 text-xs flex-wrap">
+      <!-- Coordinate Search Inputs -->
+      <div class="flex items-center gap-1.5 px-2 py-0.5 rounded-lg glass-panel-subtle border border-subtle">
+        <span id="label-search-coords" class="text-secondary text-[10px]">Coords:</span>
+        <input type="number" id="input-search-lat" placeholder="Lat" min="-90" max="90" step="0.1" class="w-16 px-1.5 py-0.5 bg-panel rounded border border-subtle text-primary text-xs mono focus:outline-none focus:border-accent">
+        <input type="number" id="input-search-lon" placeholder="Lon" min="0" max="360" step="0.1" class="w-16 px-1.5 py-0.5 bg-panel rounded border border-subtle text-primary text-xs mono focus:outline-none focus:border-accent">
+        <button id="btn-search-coords" class="px-2 py-0.5 rounded bg-accent hover:bg-accent-hover text-accent-contrast font-medium text-[11px] transition active:scale-95 cursor-pointer">
+          Fly To
+        </button>
+      </div>
+
+      <!-- Landmark Quick Search Dropdown -->
+      <div class="flex items-center gap-1 px-2 py-0.5 rounded-lg glass-panel-subtle border border-subtle">
+        <span id="label-select-landmark" class="text-secondary text-[10px]">Landmarks:</span>
+        <select id="select-landmark" class="bg-panel rounded px-1.5 py-0.5 border border-subtle text-primary text-xs focus:outline-none focus:border-accent cursor-pointer">
+          <option id="opt-landmark-default" value="">-- Select Landmark --</option>
+        </select>
+      </div>
+
+      <!-- 2D Equirectangular Map Mode -->
+      <a id="link2DMap" href="mars_2d_map.html" class="px-2.5 py-1 rounded-lg bg-accent-soft hover:bg-accent-soft border border-accent text-accent text-[11px] font-semibold transition active:scale-95 flex items-center gap-1.5 shadow-sm shadow-accent">
+        <svg class="w-3.5 h-3.5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+          <line x1="3" y1="9" x2="21" y2="9"></line>
+          <line x1="9" y1="21" x2="9" y2="9"></line>
+        </svg>
+        <span id="label-link-2d-map">2D Map (72 Tiles LOD)</span>
+      </a>
+
+      <button id="btn-reset-view" class="px-2 py-1 rounded-lg glass-panel hover:bg-hover border border-subtle text-primary text-[11px] font-medium transition active:scale-95 flex items-center gap-1 cursor-pointer">
+        <svg class="w-3 h-3 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        <span id="label-btn-reset">Reset</span>
+      </button>
+
+      <button id="btn-fullscreen" class="px-2 py-1 rounded-lg glass-panel hover:bg-hover border border-subtle text-primary text-[11px] font-medium transition active:scale-95 flex items-center gap-1 cursor-pointer">
+        <svg class="w-3 h-3 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+        </svg>
+        <span id="label-btn-fullscreen">Full</span>
+      </button>
+
+      <!-- Top-Right Language Selector (ENG | VIE) -->
+      <div id="langToggleGroup3D" class="eva-lang-switch" role="group" aria-label="Language Selector">
+        <button type="button" class="eva-lang-btn active" data-lang-btn="en" title="Switch language to English (ENG)">ENG</button>
+        <button type="button" class="eva-lang-btn" data-lang-btn="vi" title="Chuyển ngôn ngữ sang Tiếng Việt (VIE)">VIE</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HORIZONTAL DATA LAYER SELECTOR (DIRECTLY ABOVE GLOBE) -->
+  <section class="relative z-10 px-4 pt-2.5 pb-1 max-w-[1920px] w-full mx-auto">
+    <div class="glass-panel rounded-xl p-1.5 border border-subtle flex items-center gap-1.5 overflow-x-auto shadow-lg" id="layer-tabs-container">
+      <!-- Tab 1: Elevation -->
+      <button class="layer-tab active px-3 py-1.5 rounded-lg border border-transparent text-xs font-semibold flex items-center gap-2 whitespace-nowrap cursor-pointer" data-layer="elevation">
+        <span id="tab-label-elevation">⛰️ MOLA Elevation</span>
+        <span class="text-[10px] mono px-1.5 py-0.2 rounded bg-accent-soft text-accent">m</span>
+      </button>
+
+      <!-- Tab 2: Gravity Anomaly -->
+      <button class="layer-tab px-3 py-1.5 rounded-lg border border-transparent text-secondary hover:text-primary text-xs font-medium flex items-center gap-2 whitespace-nowrap cursor-pointer" data-layer="gravity_120g">
+        <span id="tab-label-gravity_120g">🌌 Gravity Anomaly</span>
+        <span class="text-[10px] mono px-1.5 py-0.2 rounded bg-soft text-secondary">mGal</span>
+      </button>
+
+      <!-- Tab 3: Slope -->
+      <button class="layer-tab px-3 py-1.5 rounded-lg border border-transparent text-secondary hover:text-primary text-xs font-medium flex items-center gap-2 whitespace-nowrap cursor-pointer" data-layer="slope">
+        <span id="tab-label-slope">📐 Surface Slope</span>
+        <span id="tab-unit-slope" class="text-[10px] mono px-1.5 py-0.2 rounded bg-soft text-secondary">deg (°)</span>
+      </button>
+
+      <!-- Tab 4: Surface Gravity -->
+      <button class="layer-tab px-3 py-1.5 rounded-lg border border-transparent text-secondary hover:text-primary text-xs font-medium flex items-center gap-2 whitespace-nowrap cursor-pointer" data-layer="surface_g">
+        <span id="tab-label-surface_g">⚡ Surface Gravity g</span>
+        <span class="text-[10px] mono px-1.5 py-0.2 rounded bg-emerald-400/20 text-emerald-300">m/s²</span>
+      </button>
+
+      <!-- Tab 5: Geoid Undulation -->
+      <button class="layer-tab px-3 py-1.5 rounded-lg border border-transparent text-secondary hover:text-primary text-xs font-medium flex items-center gap-2 whitespace-nowrap cursor-pointer" data-layer="geoid_n">
+        <span id="tab-label-geoid_n">🌐 Geoid Undulation N</span>
+        <span class="text-[10px] mono px-1.5 py-0.2 rounded bg-purple-400/20 text-purple-300">m</span>
+      </button>
+
+      <!-- Tab 6: Gravity Delta -->
+      <button class="layer-tab px-3 py-1.5 rounded-lg border border-transparent text-secondary hover:text-primary text-xs font-medium flex items-center gap-2 whitespace-nowrap cursor-pointer" data-layer="gravity_delta">
+        <span id="tab-label-gravity_delta">🔄 Gravity Diff (120G - 120F)</span>
+        <span class="text-[10px] mono px-1.5 py-0.2 rounded bg-accent-soft text-accent">mGal</span>
+      </button>
+
+      <div class="h-4 w-px bg-soft mx-1"></div>
+
+      <!-- Quick Toggle: MCS Sounding Tracks -->
+      <button id="toggle-mcs-tracks" class="px-2.5 py-1.5 rounded-lg border border-accent-soft bg-accent-soft hover:bg-accent text-accent text-xs font-medium flex items-center gap-1.5 whitespace-nowrap transition cursor-pointer">
+        <span class="w-2 h-2 rounded-full bg-accent" id="dot-mcs"></span>
+        <span id="label-mcs-tracks">MCS Sounding Tracks (1,153)</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- MAIN WORKSPACE: 3 COLUMNS -->
+  <main class="relative z-10 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 p-3 max-w-[1920px] w-full mx-auto overflow-hidden">
+
+    <!-- LEFT: COMPACT LAYER & VISUAL SETTINGS (2 COLS) -->
+    <aside class="lg:col-span-2 flex flex-col gap-2.5 max-h-[calc(100vh-175px)] overflow-y-auto pr-0.5">
+      <!-- 3D Terrain Relief Exaggeration Card -->
+      <div class="glass-panel rounded-xl p-3 border border-subtle space-y-2">
+        <div class="flex items-center justify-between pb-1 border-b border-subtle">
+          <span class="text-[11px] font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+            <span id="title-3d-exag">3D Terrain Relief</span>
+          </span>
+          <span id="label-exaggeration" class="mono text-accent font-bold text-xs">5.0x</span>
+        </div>
+
+        <!-- Presets -->
+        <div class="grid grid-cols-4 gap-1 pt-0.5">
+          <button class="btn-exag px-1.5 py-1 rounded bg-soft hover:bg-hover border border-subtle text-[10px] mono text-secondary transition cursor-pointer" data-exag="1.0">1x</button>
+          <button class="btn-exag px-1.5 py-1 rounded bg-soft hover:bg-hover border border-subtle text-[10px] mono text-secondary transition cursor-pointer" data-exag="2.0">2x</button>
+          <button class="btn-exag active px-1.5 py-1 rounded bg-accent-soft border border-accent text-[10px] mono text-accent font-bold transition cursor-pointer" data-exag="5.0">5x</button>
+          <button class="btn-exag px-1.5 py-1 rounded bg-soft hover:bg-hover border border-subtle text-[10px] mono text-secondary transition cursor-pointer" data-exag="10.0">10x</button>
+        </div>
+
+        <!-- Continuous Slider -->
+        <div class="space-y-1 pt-1">
+          <input type="range" id="slider-exaggeration" min="10" max="150" value="50" class="w-full">
+          <p id="desc-3d-exag" class="text-[9px] text-secondary leading-tight">
+            Real 3D radial displacement: Olympus &amp; Tharsis Montes rise high, Hellas Basin sinks deep.
+          </p>
+        </div>
+      </div>
+
+      <!-- Compact Scene Controls Card -->
+      <div class="glass-panel rounded-xl p-3 border border-subtle space-y-2">
+        <span id="title-space-display" class="text-[11px] font-bold text-primary uppercase tracking-wider block pb-1 border-b border-subtle">
+          Space Display
+        </span>
+
+        <!-- Graticule & Markers Toggles -->
+        <div class="space-y-1.5 text-xs">
+          <button id="toggle-grid" class="w-full px-2.5 py-1.5 rounded-lg glass-panel-subtle hover:bg-hover border border-subtle text-secondary flex items-center justify-between transition cursor-pointer">
+            <span id="label-toggle-grid" class="text-[11px]">Lat/Lon Grid 30°</span>
+            <span id="dot-grid" class="w-2 h-2 rounded-full bg-accent-hover"></span>
+          </button>
+          <button id="toggle-landmarks" class="w-full px-2.5 py-1.5 rounded-lg glass-panel-subtle hover:bg-hover border border-subtle text-secondary flex items-center justify-between transition cursor-pointer">
+            <span id="label-toggle-landmarks" class="text-[11px]">Pin 13 Landmarks</span>
+            <span id="dot-landmarks" class="w-2 h-2 rounded-full bg-accent"></span>
+          </button>
+          <button id="toggle-autorotate" class="w-full px-2.5 py-1.5 rounded-lg glass-panel-subtle hover:bg-hover border border-subtle text-secondary flex items-center justify-between transition cursor-pointer">
+            <span id="text-autorotate" class="text-[11px]">Auto-Rotate</span>
+            <span id="dot-autorotate" class="w-2 h-2 rounded-full bg-accent-hover animate-pulse"></span>
+          </button>
+        </div>
+
+        <!-- Layer Opacity -->
+        <div class="pt-1.5 border-t border-subtle space-y-1">
+          <div class="flex justify-between text-[10px]">
+            <span id="label-opacity-title" class="text-secondary">Layer Opacity:</span>
+            <span id="label-opacity" class="mono text-accent font-semibold">100%</span>
+          </div>
+          <input type="range" id="slider-opacity" min="20" max="100" value="100" class="w-full">
+        </div>
+      </div>
+
+      <!-- NASA Dataset Provenance Card -->
+      <div class="glass-panel rounded-xl p-3 border border-subtle space-y-1 text-[10px] mono text-secondary mt-auto">
+        <span id="title-nasa-sources" class="text-secondary font-bold uppercase tracking-wider block border-b border-subtle pb-1 text-[10px]">
+          NASA Data Sources
+        </span>
+        <div class="space-y-0.5 pt-0.5">
+          <div>• MGS MOLA: GTM090AA</div>
+          <div>• MRO RSS: MRO120G / 120F</div>
+          <div>• MRO MCS: 2025073120_DDR</div>
+          <div id="nasa-source-suit">• Suit: NASA xEMU Standard</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER: 3D MARS GLOBE & DYNAMIC BOTTOM BAR (6 COLS) -->
+    <section class="lg:col-span-6 flex flex-col gap-2 relative">
+      <!-- 3D Canvas Box -->
+      <div class="relative w-full h-[520px] lg:h-[calc(100vh-255px)] rounded-2xl overflow-hidden glass-panel border border-subtle shadow-2xl flex items-center justify-center group" id="globe-container">
+        <!-- WebGL Canvas -->
+        <canvas id="globe-canvas" class="w-full h-full cursor-grab active:cursor-grabbing block"></canvas>
+
+        <!-- HTML Pins Containers -->
+        <div id="pins-landmarks-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+        <div id="pins-mcs-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+
+        <!-- 3D Reticle Marker -->
+        <div id="selected-reticle" class="selected-marker hidden opacity-75">
+          <div class="w-8 h-8 rounded-full border-2 border-telemetry animate-ping absolute -inset-1"></div>
+          <div class="w-6 h-6 rounded-full border-2 border-telemetry bg-telemetry-soft backdrop-blur shadow-lg flex items-center justify-center">
+            <div class="w-1.5 h-1.5 rounded-full bg-telemetry"></div>
+          </div>
+          <div class="absolute left-8 top-1/2 -translate-y-1/2 px-2 py-0.5 rounded bg-panel backdrop-blur border border-telemetry text-[10px] mono text-telemetry whitespace-nowrap shadow-xl" id="reticle-coords">
+            18.7°N, 226.2°E
+          </div>
+        </div>
+
+        <!-- Mode Indicator HUD -->
+        <div class="absolute top-3 left-3 z-20 pointer-events-none flex flex-col gap-1 text-[10px] mono">
+          <div class="px-2.5 py-1 rounded-lg bg-panel backdrop-blur border border-subtle text-secondary flex items-center gap-2 shadow">
+            <span class="w-2 h-2 rounded-full bg-accent-hover animate-ping"></span>
+            <span id="hud-active-layer">MOLA ELEVATION (3D RELIEF 5.0x)</span>
+          </div>
+        </div>
+
+        <!-- Live Cursor Hover Tooltip -->
+        <div id="cursor-hud" class="absolute bottom-3 left-3 z-20 pointer-events-none px-3 py-1 rounded-lg bg-panel backdrop-blur border border-subtle text-[10px] mono text-secondary flex items-center gap-2.5 shadow-xl">
+          <span id="cursor-hud-label" class="text-accent font-bold">🖱️ Cursor:</span>
+          <span id="hover-coords">18.7°N, 226.2°E</span>
+          <span class="text-muted">•</span>
+          <span id="hover-val" class="font-bold text-accent">+21,289 m</span>
+        </div>
+      </div>
+
+      <!-- DYNAMIC SCIENTIFIC COLOR SCALE & ACTIVE MEASUREMENT STRIP (BOTTOM OF GLOBE) -->
+      <div class="glass-panel rounded-xl p-3 border border-subtle space-y-2 shadow-xl" id="bottom-data-bar">
+        <!-- Top Row: Active Layer Title & Live Measurement for Selected Point -->
+        <div class="flex items-center justify-between flex-wrap gap-2 pb-1.5 border-b border-subtle">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-primary flex items-center gap-1.5" id="legend-layer-title">
+              Scale: MOLA Elevation
+            </span>
+            <span class="text-[10px] mono px-1.5 py-0.2 rounded bg-accent-soft text-accent font-bold border border-accent-soft" id="legend-layer-unit">
+              m
+            </span>
+          </div>
+
+          <!-- The Single Source of Truth Selected Measurement -->
+          <div class="flex items-center gap-2 px-3 py-1 rounded-lg bg-panel border border-accent-soft shadow-inner">
+            <span class="text-[11px] text-secondary" id="bottom-measurement-label">Selected Elevation:</span>
+            <span class="text-sm font-bold mono text-accent" id="bottom-measurement-val">+21,289 m</span>
+            <span class="text-[9px] mono px-1 rounded bg-soft text-secondary" id="bottom-measurement-status">Bilinear Synchronized</span>
+          </div>
+        </div>
+
+        <!-- Dynamic Color Gradient Bar -->
+        <div class="space-y-1">
+          <div class="relative w-full h-4 rounded overflow-hidden border border-subtle shadow-inner" id="legend-color-bar"></div>
+          <div class="flex justify-between text-[10px] mono text-secondary pt-0.5" id="legend-ticks-row">
+            <span id="legend-min">-16,081 m</span>
+            <span id="legend-mid">0 m (Datum)</span>
+            <span id="legend-max">+16,989 m</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: ASTRONAUT SUIT SURVIVAL MONITOR (4 COLS) -->
+    <aside class="lg:col-span-4 flex flex-col gap-2.5 max-h-[calc(100vh-175px)] overflow-y-auto pl-0.5" id="right-panel">
+
+      <!-- MAIN ASTRONAUT SURVIVAL MONITOR CARD -->
+      <div class="glass-panel rounded-xl p-3.5 border border-accent-soft space-y-3 shadow-2xl">
+        <div class="flex items-center justify-between pb-2 border-b border-subtle">
+          <div class="flex items-center gap-2">
+            <div class="w-6 h-6 rounded bg-elevated flex items-center justify-center text-secondary">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+            </div>
+            <div>
+              <h2 id="surv-monitor-title" class="text-xs font-bold uppercase tracking-wider text-primary">ASTRONAUT SURVIVAL MONITOR</h2>
+              <span id="surv-monitor-sub" class="text-[9px] mono text-accent">NASA xEMU Standard • Mars Ambient Model</span>
+            </div>
+          </div>
+          <span id="surv-monitor-badge" class="text-[10px] mono text-secondary">EVA Monitor</span>
+        </div>
+
+        <!-- Big Status Indicator Banner -->
+        <div id="survival-banner" class="status-safe p-2.5 rounded-xl border flex items-center justify-between gap-3 shadow-lg transition-all duration-300">
+          <div class="flex items-center gap-2.5">
+            <div id="survival-dot" class="w-3.5 h-3.5 rounded-full bg-emerald-400 animate-pulse shadow"></div>
+            <div>
+              <span id="survival-status-title" class="text-sm font-extrabold tracking-wide uppercase block">SAFE</span>
+              <span id="survival-status-sub" class="text-[10px] text-secondary block">Conditions within xEMU suit operating envelope</span>
+            </div>
+          </div>
+          <div class="text-right mono">
+            <span id="survival-score-label" class="text-[10px] text-secondary block">Survival Index</span>
+            <span id="survival-score" class="text-base font-black text-primary">88/100</span>
+          </div>
+        </div>
+
+        <!-- Key Parameter Telemetry Cards -->
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <!-- Parameter 1: Temperature -->
+          <div class="p-2 rounded-lg bg-panel border border-subtle space-y-1">
+            <div class="flex justify-between items-center text-[10px]">
+              <span id="label-param-temp" class="text-secondary">Temperature (T):</span>
+              <span id="gauge-temp-status" class="mono font-bold text-emerald-400">SAFE</span>
+            </div>
+            <div class="flex justify-between items-baseline mono">
+              <span id="val-temp" class="text-xs font-bold text-primary">210.5 K</span>
+              <span id="val-temp-c" class="text-[10px] text-muted">-62.6°C</span>
+            </div>
+            <div class="text-[9px] text-secondary flex justify-between">
+              <span id="label-param-temp-limit">xEMU Limit:</span>
+              <span class="mono text-secondary">93–378 K</span>
+            </div>
+          </div>
+
+          <!-- Parameter 2: Pressure & Decompression Hazard -->
+          <div class="p-2 rounded-lg bg-panel border border-subtle space-y-1">
+            <div class="flex justify-between items-center text-[10px]">
+              <span id="label-param-press" class="text-secondary">Pressure (P):</span>
+              <span id="gauge-press-status" class="mono font-bold text-emerald-400">SAFE</span>
+            </div>
+            <div class="flex justify-between items-baseline mono">
+              <span id="val-press" class="text-xs font-bold text-primary">391.6 Pa</span>
+              <span id="val-press-mbar" class="text-[10px] text-muted">3.9 mbar</span>
+            </div>
+            <div class="text-[9px] text-secondary flex justify-between">
+              <span id="label-param-press-limit">HUT ΔP:</span>
+              <span class="mono text-secondary">~29.2 kPa</span>
+            </div>
+          </div>
+
+          <!-- Parameter 3: Slope & Fall Hazard -->
+          <div class="p-2 rounded-lg bg-panel border border-subtle space-y-1">
+            <div class="flex justify-between items-center text-[10px]">
+              <span id="label-param-slope" class="text-secondary">Terrain Slope:</span>
+              <span id="gauge-slope-status" class="mono font-bold text-emerald-400">SAFE</span>
+            </div>
+            <div class="flex justify-between items-baseline mono">
+              <span id="val-slope" class="text-xs font-bold text-primary">3.45°</span>
+              <span id="val-slope-desc" class="text-[10px] text-muted">Flat / Gentle</span>
+            </div>
+            <div class="text-[9px] text-secondary flex justify-between">
+              <span id="label-param-slope-limit">Fall Limit:</span>
+              <span class="mono text-secondary">&lt; 15.0°</span>
+            </div>
+          </div>
+
+          <!-- Parameter 4: Dust & Optical Depth -->
+          <div class="p-2 rounded-lg bg-panel border border-subtle space-y-1">
+            <div class="flex justify-between items-center text-[10px]">
+              <span id="label-param-dust" class="text-secondary">Airborne Dust (τ):</span>
+              <span id="gauge-dust-status" class="mono font-bold text-emerald-400">SAFE</span>
+            </div>
+            <div class="flex justify-between items-baseline mono">
+              <span id="val-dust" class="text-xs font-bold text-primary">0.0194</span>
+              <span id="val-dust-desc" class="text-[10px] text-muted">Clear Sky</span>
+            </div>
+            <div class="text-[9px] text-secondary flex justify-between">
+              <span id="label-param-dust-limit">RCA Filter:</span>
+              <span id="val-dust-rca" class="mono text-secondary">Nominal</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Safe EVA Operational Window -->
+        <div class="p-2.5 rounded-lg bg-panel border border-subtle flex items-center justify-between text-xs">
+          <div>
+            <span id="label-eva-duration" class="text-[10px] text-secondary block">Estimated Safe EVA Duration:</span>
+            <span id="val-eva-duration" class="font-bold text-accent text-sm mono">7.2 Hours (Nominal 8h)</span>
+          </div>
+          <div class="text-right text-[10px] mono text-secondary">
+            <div id="label-lib-battery">LIB Battery: 20.5V 40Ah</div>
+            <div id="label-sor-press">SOR Limit: 8 Hours</div>
+          </div>
+        </div>
+
+        <!-- Critical Environmental Hazard Warnings List -->
+        <div class="space-y-1 text-xs" id="warnings-container">
+          <span id="label-warnings-heading" class="text-[10px] font-bold text-secondary uppercase tracking-wider block">Local Environmental Warnings:</span>
+          <div class="space-y-1 text-[11px]" id="warnings-list">
+            <!-- Dynamically injected -->
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPACT SELECTED LOCATION & COLLAPSIBLE SCIENTIFIC DETAILS CARD -->
+      <div class="glass-panel rounded-xl p-3 border border-subtle space-y-2">
+        <!-- Compact Summary Header -->
+        <div class="flex items-center justify-between">
+          <div class="space-y-0.5">
+            <span id="label-selected-loc" class="text-[10px] text-secondary uppercase font-bold tracking-wider block">Selected Location:</span>
+            <div class="text-xs font-bold text-primary mono" id="side-selected-coords">18.65° N, 226.20° E</div>
+          </div>
+          <button id="btn-toggle-details" class="px-2 py-1 rounded bg-soft hover:bg-hover border border-subtle text-accent text-[11px] font-medium flex items-center gap-1 transition cursor-pointer">
+            <span id="text-details-toggle">DETAILS ▼</span>
+          </button>
+        </div>
+
+        <!-- Collapsible Detailed Scientific Dossier -->
+        <div id="collapsible-details" class="space-y-2.5 pt-2 border-t border-subtle text-xs hidden">
+          <!-- Full Measurements Table -->
+          <div class="divide-y divide-white/5 text-[11px] mono">
+            <div class="py-1 flex justify-between"><span id="lbl-dtl-lat-graph" class="text-secondary">Planetographic Lat:</span><span id="dtl-lat-graph" class="text-primary">18.75° N</span></div>
+            <div class="py-1 flex justify-between"><span id="lbl-dtl-lon-west" class="text-secondary">West Longitude (-180..+180°):</span><span id="dtl-lon-west" class="text-primary">-133.80° W</span></div>
+            <div class="py-1 flex justify-between"><span id="lbl-dtl-cartesian" class="text-secondary">3D Coordinates (X, Y, Z):</span><span id="dtl-cartesian" class="text-accent">-2248, -2392, 1089 km</span></div>
+            <div class="py-1 flex justify-between"><span id="lbl-dtl-elevation" class="text-secondary">MOLA Elevation (h):</span><span id="dtl-elevation" class="text-accent font-bold">+21,289 m</span></div>
+            <div class="py-1 flex justify-between"><span id="lbl-dtl-radius" class="text-secondary">Planetary Radius (R):</span><span id="dtl-radius" class="text-primary">3,414.8 km</span></div>
+            <div class="py-1 flex justify-between"><span id="lbl-dtl-slope" class="text-secondary">Terrain Slope (θ):</span><span id="dtl-slope" class="text-accent">3.45°</span></div>
+            <div class="py-1 flex justify-between"><span id="lbl-dtl-dg" class="text-secondary">Gravity Anomaly (Δg):</span><span id="dtl-dg" class="text-red-400 font-bold">+3,120.9 mGal</span></div>
+            <div class="py-1 flex justify-between"><span id="lbl-dtl-surfg" class="text-secondary">Surface Gravity (g):</span><span id="dtl-surfg" class="text-emerald-400">3.7448 m/s²</span></div>
+            <div class="py-1 flex justify-between"><span id="lbl-dtl-geoid" class="text-secondary">Geoid / Areoid (N):</span><span id="dtl-geoid" class="text-purple-300">+4,074 m</span></div>
+            <div class="py-1 flex justify-between"><span id="lbl-dtl-delta" class="text-secondary">Model Diff (120G - 120F):</span><span id="dtl-delta" class="text-accent">+4.2 mGal</span></div>
+            <div class="py-1 flex justify-between"><span id="lbl-dtl-mcs-id" class="text-secondary">Nearest MCS Track:</span><span id="dtl-mcs-id" class="text-emerald-300">#42 (45 km away)</span></div>
+          </div>
+
+          <!-- Vertical Atmospheric Sounding Chart -->
+          <div class="space-y-1 pt-1">
+            <span id="label-mcs-chart" class="text-[10px] text-secondary block font-sans">Vertical Temperature Profile T(z) vs Altitude (km):</span>
+            <div class="w-full h-28 rounded bg-panel border border-subtle p-1 flex items-center justify-center overflow-hidden" id="mcs-chart-container"></div>
+          </div>
+
+          <!-- Local Terrain Cross-Section -->
+          <div class="space-y-1 pt-1">
+            <span id="label-cross-section" class="text-[10px] text-secondary block font-sans">Local Terrain Cross-Section (250 km):</span>
+            <div class="w-full h-20 rounded bg-panel border border-subtle p-1 flex items-center justify-center overflow-hidden" id="cross-section-container"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- EMBEDDED DATA PAYLOAD -->
+  <script>
+    window.MARS_EXPLORER_DATA = __PAYLOAD_DATA_PLACEHOLDER__;
+  </script>
+
+  <!-- CORE SCRIPT LOGIC -->
+  <script>
+  (function() {
+    console.log("Starting NASA Mars Explorer with Real 3D Terrain Relief & Astronaut Survival Monitor...");
+    const payload = window.MARS_EXPLORER_DATA;
+    const meta = payload.meta;
+    const textures = payload.textures;
+    const landmarks = payload.landmarks;
+    const mcsTracks = payload.mcs_tracks;
+    const mcsSoundings = payload.mcs_soundings;
+
+    // 1. Starfield
+    const bgCanvas = document.getElementById('space-bg');
+    const bgCtx = bgCanvas.getContext('2d');
+    function resizeBg() {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+      drawStars();
+    }
+    const stars = [];
+    for(let i=0; i<320; i++) {
+      stars.push({
+        x: Math.random(),
+        y: Math.random(),
+        r: Math.random() * 1.5 + 0.3,
+        alpha: Math.random() * 0.8 + 0.2
+      });
+    }
+    function drawStars() {
+      const rootStyle = getComputedStyle(document.documentElement);
+      const bgCanvasHex = rootStyle.getPropertyValue('--bg-canvas').trim() || '#1f1e24';
+      const starRgb = rootStyle.getPropertyValue('--text-secondary-rgb').trim() || '224, 222, 244';
+      const isLightTheme = !!(window.EvaTheme && window.EvaTheme.getThemeMeta && window.EvaTheme.getThemeMeta().isLight);
+      const starAlphaScale = isLightTheme ? 0.20 : 0.85;
+      bgCtx.fillStyle = bgCanvasHex;
+      bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+      for(const s of stars) {
+        bgCtx.fillStyle = `rgba(${starRgb}, ${(s.alpha * starAlphaScale).toFixed(3)})`;
+        bgCtx.beginPath();
+        bgCtx.arc(s.x * bgCanvas.width, s.y * bgCanvas.height, s.r, 0, Math.PI * 2);
+        bgCtx.fill();
+      }
+    }
+    window.drawStars = drawStars;
+    if (window.onEvaThemeChange) {
+      window.onEvaThemeChange(() => {
+        drawStars();
+      });
+    }
+    window.addEventListener('resize', resizeBg);
+    resizeBg();
+
+    // 2. Setup WebGL Context
+    const canvas = document.getElementById('globe-canvas');
+    const gl = canvas.getContext('webgl', { antialias: true, alpha: false, depth: true });
+    if (!gl) {
+      alert("WebGL is required for 3D Mars Explorer.");
+      return;
+    }
+
+    // 3D Shaders with REAL GEOMETRIC DISPLACEMENT and PERTURBED SURFACE NORMALS
+    const vsSource = `
+      attribute vec3 aPosition;
+      attribute vec3 aNormal;
+      attribute vec2 aUv;
+
+      uniform mat4 uProjectionMatrix;
+      uniform mat4 uModelViewMatrix;
+      uniform mat3 uNormalMatrix;
+      uniform sampler2D uPackedDataTexture;
+      uniform float uExaggeration;
+
+      varying vec3 vNormal;
+      varying vec3 vPosition;
+      varying vec2 vUv;
+      varying float vElevation;
+
+      void main() {
+        vUv = aUv;
+        vec4 packedData = texture2D(uPackedDataTexture, aUv);
+
+        // Decode 16-bit normalized elevation (0..1)
+        float normElev = (packedData.r * 256.0 + packedData.g) / 257.0;
+        // Real MOLA elevation in meters (-16081 to +16989 m)
+        float elevMeters = -16081.2 + normElev * (16989.1 - (-16081.2));
+        vElevation = elevMeters;
+
+        // REAL 3D RADIAL DISPLACEMENT: r = R_Mars + h * exaggeration
+        // Normalized displacement along sphere normal:
+        float disp = (elevMeters / 3396000.0) * uExaggeration * 2.8;
+        vec3 displacedPos = aPosition + aNormal * disp;
+
+        // PERTURB SURFACE NORMALS VIA CENTRAL DIFFERENCES FOR REAL 3D RELIEF LIGHTING
+        vec2 texel = vec2(1.0 / 720.0, 1.0 / 360.0);
+        float eL = (texture2D(uPackedDataTexture, aUv - vec2(texel.x, 0.0)).r * 256.0 + texture2D(uPackedDataTexture, aUv - vec2(texel.x, 0.0)).g) / 257.0;
+        float eR = (texture2D(uPackedDataTexture, aUv + vec2(texel.x, 0.0)).r * 256.0 + texture2D(uPackedDataTexture, aUv + vec2(texel.x, 0.0)).g) / 257.0;
+        float eD = (texture2D(uPackedDataTexture, aUv - vec2(0.0, texel.y)).r * 256.0 + texture2D(uPackedDataTexture, aUv - vec2(0.0, texel.y)).g) / 257.0;
+        float eU = (texture2D(uPackedDataTexture, aUv + vec2(0.0, texel.y)).r * 256.0 + texture2D(uPackedDataTexture, aUv + vec2(0.0, texel.y)).g) / 257.0;
+
+        vec3 T = normalize(vec3(aPosition.z, 0.0, -aPosition.x));
+        vec3 B = cross(aNormal, T);
+
+        float dH_dx = (eR - eL) * uExaggeration * 6.5;
+        float dH_dy = (eU - eD) * uExaggeration * 6.5;
+
+        vec3 perturbedNormal = normalize(aNormal - dH_dx * T - dH_dy * B);
+        vNormal = normalize(uNormalMatrix * perturbedNormal);
+
+        vec4 mvPos = uModelViewMatrix * vec4(displacedPos, 1.0);
+        vPosition = mvPos.xyz;
+        gl_Position = uProjectionMatrix * mvPos;
+      }
+    `;
+
+    const fsSource = `
+      precision mediump float;
+
+      varying vec3 vNormal;
+      varying vec3 vPosition;
+      varying vec2 vUv;
+      varying float vElevation;
+
+      uniform sampler2D uActiveTexture;
+      uniform float uOpacity;
+      uniform bool uShowGrid;
+      uniform vec3 uSunDirection;
+
+      void main() {
+        vec3 normal = normalize(vNormal);
+        vec3 viewDir = normalize(-vPosition);
+
+        // Sunlight diffuse
+        float diff = max(dot(normal, uSunDirection), 0.0);
+        diff = 0.32 + 0.68 * diff;
+
+        // Specular highlight on steep slopes / ice caps
+        vec3 halfDir = normalize(uSunDirection + viewDir);
+        float spec = pow(max(dot(normal, halfDir), 0.0), 18.0) * 0.15;
+
+        // Atmospheric rim glow
+        float rim = 1.0 - max(dot(normal, viewDir), 0.0);
+        rim = pow(rim, 3.4) * 0.45;
+        vec3 atmosphereColor = vec3(0.92, 0.48, 0.28) * rim;
+
+        vec3 baseColor = texture2D(uActiveTexture, vUv).rgb;
+
+        // Graticule Grid overlay
+        if (uShowGrid) {
+          float latDeg = vUv.y * 180.0;
+          float lonDeg = vUv.x * 360.0;
+
+          float latGrid = abs(fract(latDeg / 30.0 + 0.5) - 0.5);
+          float lonGrid = abs(fract(lonDeg / 30.0 + 0.5) - 0.5);
+
+          float isEquator = abs(latDeg - 90.0);
+          float isPrime = min(abs(lonDeg), abs(lonDeg - 360.0));
+
+          if (isEquator < 0.6) {
+            baseColor = mix(baseColor, vec3(1.0, 0.9, 0.1), 0.9);
+          } else if (isPrime < 0.6) {
+            baseColor = mix(baseColor, vec3(0.2, 0.9, 1.0), 0.9);
+          } else if (latGrid < 0.025 || lonGrid < 0.015) {
+            baseColor = mix(baseColor, vec3(1.0), 0.35);
+          }
+        }
+
+        vec3 shaded = baseColor * diff + vec3(spec) + atmosphereColor;
+        gl_FragColor = vec4(shaded, uOpacity);
+      }
+    `;
+
+    function compileShader(source, type) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.error(gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        return null;
+      }
+      return shader;
+    }
+
+    const program = gl.createProgram();
+    gl.attachShader(program, compileShader(vsSource, gl.VERTEX_SHADER));
+    gl.attachShader(program, compileShader(fsSource, gl.FRAGMENT_SHADER));
+    gl.linkProgram(program);
+    gl.useProgram(program);
+
+    const uProjMatLoc = gl.getUniformLocation(program, 'uProjectionMatrix');
+    const uMvMatLoc = gl.getUniformLocation(program, 'uModelViewMatrix');
+    const uNormMatLoc = gl.getUniformLocation(program, 'uNormalMatrix');
+    const uActiveTexLoc = gl.getUniformLocation(program, 'uActiveTexture');
+    const uPackedDataTexLoc = gl.getUniformLocation(program, 'uPackedDataTexture');
+    const uExaggerationLoc = gl.getUniformLocation(program, 'uExaggeration');
+    const uOpacityLoc = gl.getUniformLocation(program, 'uOpacity');
+    const uShowGridLoc = gl.getUniformLocation(program, 'uShowGrid');
+    const uSunDirLoc = gl.getUniformLocation(program, 'uSunDirection');
+
+    // High Subdivision Sphere Geometry (120 lat x 240 lon = 29,161 vertices)
+    const latBands = 120;
+    const lonBands = 240;
+    const positions = [];
+    const normals = [];
+    const uvs = [];
+    const indices = [];
+
+    for (let lat = 0; lat <= latBands; lat++) {
+      const theta = (lat * Math.PI) / latBands;
+      const sinTheta = Math.sin(theta);
+      const cosTheta = Math.cos(theta);
+
+      for (let lon = 0; lon <= lonBands; lon++) {
+        const phi = (lon * 2 * Math.PI) / lonBands;
+        const sinPhi = Math.sin(phi);
+        const cosPhi = Math.cos(phi);
+
+        const x = -sinTheta * cosPhi;
+        const y = cosTheta;
+        const z = sinTheta * sinPhi;
+
+        positions.push(x, y, z);
+        normals.push(x, y, z);
+        uvs.push(lon / lonBands, lat / latBands);
+      }
+    }
+
+    for (let lat = 0; lat < latBands; lat++) {
+      for (let lon = 0; lon < lonBands; lon++) {
+        const first = lat * (lonBands + 1) + lon;
+        const second = first + lonBands + 1;
+        indices.push(first, second, first + 1);
+        indices.push(second, second + 1, first + 1);
+      }
+    }
+
+    const posBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+    const normBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, normBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+
+    const uvBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uvs), gl.STATIC_DRAW);
+
+    const indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+
+    const aPosLoc = gl.getAttribLocation(program, 'aPosition');
+    const aNormLoc = gl.getAttribLocation(program, 'aNormal');
+    const aUvLoc = gl.getAttribLocation(program, 'aUv');
+
+    gl.enableVertexAttribArray(aPosLoc);
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+    gl.vertexAttribPointer(aPosLoc, 3, gl.FLOAT, false, 0, 0);
+
+    gl.enableVertexAttribArray(aNormLoc);
+    gl.bindBuffer(gl.ARRAY_BUFFER, normBuffer);
+    gl.vertexAttribPointer(aNormLoc, 3, gl.FLOAT, false, 0, 0);
+
+    gl.enableVertexAttribArray(aUvLoc);
+    gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+    gl.vertexAttribPointer(aUvLoc, 2, gl.FLOAT, false, 0, 0);
+
+    // 3. Texture Loading
+    function createTexture(image) {
+      const tex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      return tex;
+    }
+
+    const loadedTextures = {};
+    let texPackedData = null;
+    let activeTexture = null;
+
+    // Load packed data texture into a 2D canvas for client-side direct pixel sampling
+    const sampleCanvas = document.createElement('canvas');
+    sampleCanvas.width = 720;
+    sampleCanvas.height = 360;
+    const sampleCtx = sampleCanvas.getContext('2d');
+    let samplePixels = null;
+    let geoidDeltaPixels = null;
+    let geoidNGrid = null;
+    let gravityDeltaGrid = null;
+
+    const imgPacked = new Image();
+    imgPacked.onload = () => {
+      texPackedData = createTexture(imgPacked);
+      sampleCtx.drawImage(imgPacked, 0, 0);
+      samplePixels = sampleCtx.getImageData(0, 0, 720, 360).data;
+      console.log("Scientific 16-bit packed sampling grid loaded.");
+      // Trigger initial state
+      updateState();
+    };
+    imgPacked.src = "data:image/png;base64," + textures.tex_packed_data;
+
+    if (textures.tex_packed_geoid_delta) {
+      const gdCanvas = document.createElement('canvas');
+      gdCanvas.width = 720;
+      gdCanvas.height = 360;
+      const gdCtx = gdCanvas.getContext('2d');
+      const imgGD = new Image();
+      imgGD.onload = () => {
+        gdCtx.drawImage(imgGD, 0, 0);
+        geoidDeltaPixels = gdCtx.getImageData(0, 0, 720, 360).data;
+        updateState();
+      };
+      imgGD.src = "data:image/png;base64," + textures.tex_packed_geoid_delta;
+    }
+
+    if (typeof fetch === 'function') {
+      Promise.all([
+        fetch('data/geoid_n.bin').then(r => r.ok ? r.arrayBuffer() : null).catch(() => null),
+        fetch('data/gravity_delta.bin').then(r => r.ok ? r.arrayBuffer() : null).catch(() => null)
+      ]).then(([geoidBuf, gdeltaBuf]) => {
+        if (geoidBuf && geoidBuf.byteLength === 720 * 360 * 4) {
+          geoidNGrid = new Float32Array(geoidBuf);
+        }
+        if (gdeltaBuf && gdeltaBuf.byteLength === 720 * 360 * 4) {
+          gravityDeltaGrid = new Float32Array(gdeltaBuf);
+        }
+        if (geoidNGrid || gravityDeltaGrid) updateState();
+      });
+    }
+
+    const layerKeys = ["elevation", "slope", "gravity_120g", "surface_g", "geoid_n", "gravity_delta"];
+    layerKeys.forEach(k => {
+      const img = new Image();
+      img.onload = () => {
+        loadedTextures[k] = createTexture(img);
+        if (k === appState.selectedLayerId) {
+          activeTexture = loadedTextures[k];
+        }
+      };
+      img.src = "data:image/png;base64," + textures["tex_" + k];
+    });
+
+    // 4. Matrix Math Utilities
+    function mat4Create() {
+      return new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]);
+    }
+    function mat4Perspective(out, fovy, aspect, near, far) {
+      const f = 1.0 / Math.tan(fovy / 2);
+      const nf = 1 / (near - far);
+      out[0] = f / aspect; out[1] = 0; out[2] = 0; out[3] = 0;
+      out[4] = 0; out[5] = f; out[6] = 0; out[7] = 0;
+      out[8] = 0; out[9] = 0; out[10] = (far + near) * nf; out[11] = -1;
+      out[12] = 0; out[13] = 0; out[14] = (2 * far * near) * nf; out[15] = 0;
+      return out;
+    }
+    function mat3FromMat4(out, a) {
+      out[0] = a[0]; out[1] = a[1]; out[2] = a[2];
+      out[3] = a[4]; out[4] = a[5]; out[5] = a[6];
+      out[6] = a[8]; out[7] = a[9]; out[8] = a[10];
+      return out;
+    }
+
+    // 5. UNIFIED REACTIVE APPLICATION STATE (SINGLE SOURCE OF TRUTH)
+    const appState = {
+      selectedLocation: { lat: 18.65, lon: 226.2 }, // Olympus Mons default
+      selectedLayerId: "elevation",
+      exaggeration: 5.0, // Default 5x for visible 3D terrain!
+      layerOpacity: 1.0,
+      showGrid: true,
+      showLandmarks: true,
+      showMcsTracks: true,
+      autoRotate: true,
+      autoRotateSpeed: 0.003,
+      // Cached active scientific query
+      selectedMeasurement: {
+        layerId: "elevation",
+        name: "Độ cao MOLA",
+        valueText: "+21,289 m",
+        unit: "m"
+      }
+    };
+
+    // Synchronize Initial Coordinates & Layer from 2D Map (via URL or LocalStorage)
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const pLat = parseFloat(urlParams.get('lat'));
+      const pLon = parseFloat(urlParams.get('lon'));
+      const pLayer = urlParams.get('layer');
+
+      if (!isNaN(pLat) && !isNaN(pLon)) {
+        appState.selectedLocation = { lat: pLat, lon: pLon };
+      } else {
+        const saved = JSON.parse(localStorage.getItem('mars_active_coords'));
+        if (saved && !isNaN(saved.lat) && !isNaN(saved.lon)) {
+          appState.selectedLocation = { lat: saved.lat, lon: saved.lon };
+          if (saved.layer) appState.selectedLayerId = saved.layer;
+        }
+      }
+      if (pLayer) appState.selectedLayerId = pLayer;
+    } catch (_) {}
+
+    const tr = (en, vi) => (window.evaTr ? window.evaTr(en, vi) : en);
+
+    function getLayerMeta(layerId) {
+      const m = layerMetadata[layerId] || layerMetadata.elevation;
+      return {
+        ...m,
+        name: tr(m.nameEn, m.nameVi),
+        unit: tr(m.unitEn, m.unitVi),
+        mid: tr(m.midEn, m.midVi),
+        desc: tr(m.descEn, m.descVi)
+      };
+    }
+
+    const layerMetadata = {
+      elevation: {
+        id: "elevation",
+        nameEn: "MOLA Elevation",
+        nameVi: "Độ Cao MOLA",
+        unitEn: "m",
+        unitVi: "m",
+        min: meta.elevation.min.toLocaleString() + " m",
+        midEn: "0 m (Datum)",
+        midVi: "0 m (Datum)",
+        max: "+" + meta.elevation.max.toLocaleString() + " m",
+        gradient: "linear-gradient(to right, var(--bg-canvas) 0%, var(--bg-elevated) 25%, var(--border-strong) 50%, var(--text-secondary) 75%, var(--text-primary) 100%)",
+        descEn: "MGS MOLA GTM090AA model (Topographic elevation relative to standard areoid datum)",
+        descVi: "Mô hình MGS MOLA GTM090AA (Độ cao địa hình so với areoid datum chuẩn)"
+      },
+      gravity_120g: {
+        id: "gravity_120g",
+        nameEn: "Gravity Anomaly",
+        nameVi: "Dị Thường Trọng Lực",
+        unitEn: "mGal",
+        unitVi: "mGal",
+        min: meta.gravity_120g.min.toFixed(1) + " mGal",
+        midEn: "0 mGal (Balanced)",
+        midVi: "0 mGal (Cân bằng)",
+        max: "+" + meta.gravity_120g.max.toFixed(1) + " mGal",
+        gradient: "linear-gradient(to right, var(--bg-canvas) 0%, var(--border-subtle) 18%, var(--border-strong) 36%, var(--text-muted) 50%, var(--text-secondary) 68%, var(--text-primary) 100%)",
+        descEn: "MRO120G degree-120 model (Free-Air Gravity Anomaly from MRO orbit)",
+        descVi: "Mô hình MRO120G bậc 120 (Free-Air Gravity Anomaly từ quỹ đạo MRO)"
+      },
+      slope: {
+        id: "slope",
+        nameEn: "Surface Slope",
+        nameVi: "Độ Dốc Bề Mặt",
+        unitEn: "deg (°)",
+        unitVi: "độ (°)",
+        min: "0.0°",
+        midEn: "3.0°",
+        midVi: "3.0°",
+        max: meta.slope.max.toFixed(1) + "°",
+        gradient: "linear-gradient(to right, var(--bg-canvas) 0%, var(--bg-elevated) 30%, var(--border-strong) 60%, var(--text-primary) 100%)",
+        descEn: "Topographic slope gradient computed from MOLA elevation matrix (Horn's method)",
+        descVi: "Độ dốc gradient địa hình tính từ ma trận độ cao MOLA (Thuật toán Horn)"
+      },
+      surface_g: {
+        id: "surface_g",
+        nameEn: "Surface Gravity g",
+        nameVi: "Gia Tốc Trọng Trường Bề Mặt",
+        unitEn: "m/s²",
+        unitVi: "m/s²",
+        min: meta.surface_g.min.toFixed(4) + " m/s²",
+        midEn: "3.7266 m/s²",
+        midVi: "3.7266 m/s²",
+        max: meta.surface_g.max.toFixed(4) + " m/s²",
+        gradient: "linear-gradient(to right, var(--bg-canvas) 0%, var(--bg-elevated) 25%, var(--border-strong) 50%, var(--text-secondary) 75%, var(--text-primary) 100%)",
+        descEn: "Total surface gravity g = g₀ + Δg on the reference sphere",
+        descVi: "Trọng trường bề mặt toàn phần g = g₀ + Δg trên mặt cầu quy chiếu"
+      },
+      geoid_n: {
+        id: "geoid_n",
+        nameEn: "Geoid / Areoid Undulation",
+        nameVi: "Mặt Geoid / Areoid Undulation",
+        unitEn: "m",
+        unitVi: "m",
+        min: meta.geoid_n.min.toFixed(1) + " m",
+        midEn: "0 m",
+        midVi: "0 m",
+        max: "+" + meta.geoid_n.max.toFixed(1) + " m",
+        gradient: "linear-gradient(to right, var(--bg-canvas) 0%, var(--bg-elevated) 25%, var(--border-strong) 50%, var(--text-secondary) 75%, var(--text-primary) 100%)",
+        descEn: "Equipotential gravity surface equivalent to nominal Mars sea level",
+        descVi: "Mặt thế vị đẳng trọng trường tương đương mực nước biển danh định Sao Hỏa"
+      },
+      gravity_delta: {
+        id: "gravity_delta",
+        nameEn: "Gravity Diff (120G - 120F)",
+        nameVi: "Vi Sai Trọng Lực (120G - 120F)",
+        unitEn: "mGal",
+        unitVi: "mGal",
+        min: meta.gravity_delta.min.toFixed(1) + " mGal",
+        midEn: "0 mGal (Match)",
+        midVi: "0 mGal (Khớp)",
+        max: "+" + meta.gravity_delta.max.toFixed(1) + " mGal",
+        gradient: "linear-gradient(to right, var(--text-secondary) 0%, var(--border-strong) 35%, var(--text-primary) 50%, var(--border-strong) 65%, var(--text-secondary) 100%)",
+        descEn: "Differential residual between MRO120G and MRO120F gravity field solutions",
+        descVi: "Chênh lệch vi sai giữa hai thế hệ nghiệm trường trọng lực MRO120G và MRO120F"
+      }
+    };
+
+    // 6. Camera Coordinates State
+    const initialPitch = (18.65 * Math.PI) / 180.0;
+    const initialYaw = Math.PI / 2.0 - (226.2 * Math.PI) / 180.0;
+
+    let currentRotation = { pitch: initialPitch, yaw: initialYaw };
+    let targetRotation = { pitch: initialPitch, yaw: initialYaw };
+    let cameraDistance = 2.45;
+    let targetCameraDistance = 2.45;
+
+    // 7. Scientific Sampling Engine (Bilinear Float Interpolation)
+    function sampleGrid(lat, lon) {
+      if (!samplePixels) return null;
+      let normLon = lon % 360.0;
+      if (normLon < 0) normLon += 360.0;
+      const clampLat = Math.max(-89.99, Math.min(89.99, lat));
+
+      const u = (normLon / 360.0) * 720.0 - 0.5;
+      const v = ((90.0 - clampLat) / 180.0) * 360.0 - 0.5;
+
+      const x0 = Math.floor(u);
+      const y0 = Math.floor(v);
+      const x1 = x0 + 1;
+      const y1 = y0 + 1;
+      const fx = u - x0;
+      const fy = v - y0;
+
+      function getSample(col, row) {
+        const c = ((col % 720) + 720) % 720;
+        const r = Math.max(0, Math.min(359, row));
+        const idx = (r * 720 + c) * 4;
+        const rVal = samplePixels[idx];
+        const gVal = samplePixels[idx + 1];
+        const bVal = samplePixels[idx + 2];
+        const aVal = samplePixels[idx + 3];
+
+        const normE = ((rVal << 8) | gVal) / 65535.0;
+        const normG = ((bVal << 8) | aVal) / 65535.0;
+
+        const elev = meta.elevation.min + normE * (meta.elevation.max - meta.elevation.min);
+        const dg = meta.gravity_120g.min + normG * (meta.gravity_120g.max - meta.gravity_120g.min);
+        return { elev, dg };
+      }
+
+      const s00 = getSample(x0, y0);
+      const s10 = getSample(x1, y0);
+      const s01 = getSample(x0, y1);
+      const s11 = getSample(x1, y1);
+
+      const elev = (1 - fx) * (1 - fy) * s00.elev +
+                    fx * (1 - fy) * s10.elev +
+                    (1 - fx) * fy * s01.elev +
+                    fx * fy * s11.elev;
+
+      const dg = (1 - fx) * (1 - fy) * s00.dg +
+                 fx * (1 - fy) * s10.dg +
+                 (1 - fx) * fy * s01.dg +
+                 fx * fy * s11.dg;
+
+      // Local slope
+      const sEast = getSample(x0 + 1, y0);
+      const sWest = getSample(x0 - 1, y0);
+      const sNorth = getSample(x0, y0 - 1);
+      const sSouth = getSample(x0, y0 + 1);
+
+      const dxMeters = (2.0 * Math.PI * 3396000.0 * Math.cos((clampLat * Math.PI) / 180.0)) / 720.0;
+      const dyMeters = (Math.PI * 3396000.0) / 360.0;
+      const dh_dx = (sEast.elev - sWest.elev) / (2.0 * Math.max(100.0, dxMeters));
+      const dh_dy = (sNorth.elev - sSouth.elev) / (2.0 * dyMeters);
+      const slopeDeg = Math.atan(Math.hypot(dh_dx, dh_dy)) * (180.0 / Math.PI);
+
+      const surfaceG = 3.713606 + dg * 1e-5;
+
+      // Bilinear interpolation of spherical harmonic Areoid geoid undulation N (m) and Differential Gravity (mGal)
+      function sampleGeoidAndDelta(col, row) {
+        const c = ((col % 720) + 720) % 720;
+        const r = Math.max(0, Math.min(359, row));
+        const cellIdx = r * 720 + c;
+        let nVal = 0.0;
+        let dVal = 0.0;
+        if (geoidNGrid && geoidNGrid.length === 259200) {
+          nVal = geoidNGrid[cellIdx];
+        } else if (geoidDeltaPixels) {
+          const pIdx = cellIdx * 4;
+          const normN = ((geoidDeltaPixels[pIdx] << 8) | geoidDeltaPixels[pIdx + 1]) / 65535.0;
+          nVal = meta.geoid_n.min + normN * (meta.geoid_n.max - meta.geoid_n.min);
+        }
+        if (gravityDeltaGrid && gravityDeltaGrid.length === 259200) {
+          dVal = gravityDeltaGrid[cellIdx];
+        } else if (geoidDeltaPixels) {
+          const pIdx = cellIdx * 4;
+          const normD = ((geoidDeltaPixels[pIdx + 2] << 8) | geoidDeltaPixels[pIdx + 3]) / 65535.0;
+          dVal = meta.gravity_delta.min + normD * (meta.gravity_delta.max - meta.gravity_delta.min);
+        }
+        return { nVal, dVal };
+      }
+
+      const gd00 = sampleGeoidAndDelta(x0, y0);
+      const gd10 = sampleGeoidAndDelta(x1, y0);
+      const gd01 = sampleGeoidAndDelta(x0, y1);
+      const gd11 = sampleGeoidAndDelta(x1, y1);
+
+      const geoidN = (1 - fx) * (1 - fy) * gd00.nVal +
+                     fx * (1 - fy) * gd10.nVal +
+                     (1 - fx) * fy * gd01.nVal +
+                     fx * fy * gd11.nVal;
+      const deltaGravity = (1 - fx) * (1 - fy) * gd00.dVal +
+                           fx * (1 - fy) * gd10.dVal +
+                           (1 - fx) * fy * gd01.dVal +
+                           fx * fy * gd11.dVal;
+      const radiusMeters = 3396000.0 + geoidN + elev;
+
+      return {
+        elevation: elev,
+        gravityAnomaly: dg,
+        slope: slopeDeg,
+        surfaceG: surfaceG,
+        radiusKm: radiusMeters / 1000.0,
+        geoidN: geoidN,
+        deltaGravity: deltaGravity
+      };
+    }
+
+    // 8. NASA xEMU ASTRONAUT SUIT SURVIVAL EVALUATION ENGINE
+    function evaluateAstronautSurvival(lat, lon, sampleData) {
+      const latAbs = Math.abs(lat);
+      const elev = sampleData.elevation;
+      const slope = sampleData.slope;
+
+      // Estimated environmental parameters based on MGS/MRO models:
+      // Mars diurnal/seasonal temperature model:
+      // Equator ~ 210-240 K, subpolar ~ 170-190 K, polar ice cap winter ~ 130-145 K
+      let estTempK = 230.0 - (latAbs / 90.0) * 85.0 - (Math.max(0, elev) / 1000.0) * 1.6;
+      if (latAbs > 80.0) estTempK = 135.0; // Polar cap deep chill
+
+      // Barometric surface pressure model (modeled estimate): P(h) = P0 * exp(-(M_CO2 * g * h)/(R * T))
+      // P0 = 610.0 Pa, T = 210.0 K, M_CO2 = 0.04401 kg/mol, g = 3.71 m/s^2, R = 8.314462618 J/(mol*K) => H = 10693.70506 m
+      const scaleHeightM = (8.314462618 * 210.0) / (0.04401 * 3.71);
+      let estPressPa = 610.0 * Math.exp(-elev / scaleHeightM);
+      estPressPa = Math.max(80.0, Math.min(1250.0, estPressPa));
+
+      // Dust optical depth: regional baseline ~ 0.02, higher near basin margins
+      let estDust = 0.02 + (elev < -3000 ? 0.03 : 0.0);
+
+      const warnings = [];
+      let tempStatus = "SAFE";
+      let pressStatus = "SAFE";
+      let slopeStatus = "SAFE";
+      let dustStatus = "SAFE";
+
+      // A. Temperature check (xEMU limits: 93 K to 378 K [-292°F to +220°F])
+      if (estTempK < 120.0) {
+        tempStatus = "DANGEROUS";
+        warnings.push({
+          level: "danger",
+          text: tr(
+            "Extreme Cold Hazard (&lt;120 K): Risk of rotary bearing grease solidification and xEMU battery freezing.",
+            "Nguy hiểm nhiệt độ cực thấp (&lt;120 K): Nguy cơ đông kết mỡ bôi trơn khớp quay và đóng băng pin xEMU."
+          )
+        });
+      } else if (estTempK < 160.0) {
+        tempStatus = "UNCERTAIN";
+        warnings.push({
+          level: "warn",
+          text: tr(
+            "Low Temperature Warning (120–160 K): Elevated LIB battery heater load reduces EVA duration.",
+            "Cảnh báo nhiệt độ thấp (120–160 K): Tải sưởi pin LIB tăng cao, giảm thời lượng EVA."
+          )
+        });
+      } else if (estTempK > 320.0) {
+        tempStatus = "UNCERTAIN";
+        warnings.push({
+          level: "warn",
+          text: tr(
+            "High Temperature Warning: Approaching 1200W heat rejection limit of the SWME unit.",
+            "Cảnh báo nhiệt độ cao: Tiếp cận giới hạn thải nhiệt 1200W của thiết bị SWME."
+          )
+        });
+      }
+
+      // B. Pressure check & Decompression / SWME Triple-point check
+      if (estPressPa < 150.0) {
+        pressStatus = "DANGEROUS";
+        warnings.push({
+          level: "danger",
+          text: tr(
+            "Near-Vacuum Hazard (&lt;150 Pa): Micro-meteoroid puncture causes rapid decompression; zero leak response margin.",
+            "Nguy hiểm áp suất cận chân không (&lt;150 Pa): Nguy cơ nứt vỡ vi mô gây nổ áp tức thì; thời gian phản ứng rò rỉ bằng 0."
+          )
+        });
+      } else if (estPressPa > 611.65) {
+        // Exceeds water triple point (611.65 Pa)
+        pressStatus = "UNCERTAIN";
+        warnings.push({
+          level: "warn",
+          text: tr(
+            "SWME Backpressure Advisory: Ambient pressure exceeds water triple point (611.65 Pa); Mini-ME backpressure valve required [1][6].",
+            "Khuyến nghị điều áp SWME: Áp suất vượt điểm ba trạng thái nước (611.65 Pa), yêu cầu kích hoạt van đối áp Mini-ME [1][6]."
+          )
+        });
+      }
+
+      // C. Slope Hazard check (xEMU HUT Suit rigid joints)
+      if (slope > 20.0) {
+        slopeStatus = "DANGEROUS";
+        warnings.push({
+          level: "danger",
+          text: tr(
+            "Steep Slope Hazard (&gt;20°): Severe slip/fall risk, rigid joint lockup, and suit bladder abrasion on sharp basalt.",
+            "Nguy hiểm địa hình dốc đứng (&gt;20°): Nguy cơ trượt ngã, khóa khớp cứng và rách thủng vỏ áp suất vào đá basalt nhọn."
+          )
+        });
+      } else if (slope > 10.0) {
+        slopeStatus = "UNCERTAIN";
+        warnings.push({
+          level: "warn",
+          text: tr(
+            "Slope Caution (10°–20°): Metabolic O₂ consumption surges (&gt;350 W), reducing safe EVA duration.",
+            "Cảnh báo độ dốc (10°–20°): Tải trao đổi chất tiêu hao oxy tăng vọt (&gt;350 W), giảm thời gian EVA."
+          )
+        });
+      }
+
+      // D. Dust Hazard check
+      if (estDust > 0.5) {
+        dustStatus = "DANGEROUS";
+        warnings.push({
+          level: "danger",
+          text: tr(
+            "Dust Storm Low Visibility: Electrostatic silicate fines clog RCA CO₂ filter pores and abrade rotary seals.",
+            "Bão bụi quang đãng thấp: Hạt bụi tĩnh điện silicate mịn làm tắc lỗ màng lọc CO2 RCA và mài mòn gioăng khớp."
+          )
+        });
+      } else if (estDust > 0.15) {
+        dustStatus = "UNCERTAIN";
+        warnings.push({
+          level: "warn",
+          text: tr(
+            "Suspended Dust Caution: Inspect SWME membrane thermal emissivity after EVA.",
+            "Bụi lơ lửng: Cần kiểm tra độ phát xạ nhiệt màng SWME sau ca bộ hành."
+          )
+        });
+      }
+
+      // Safe EVA Duration calculation (Nominal 8h SOR limit)
+      let evaHours = 8.0;
+      if (slope > 15.0) evaHours -= 2.5;
+      else if (slope > 8.0) evaHours -= 1.0;
+
+      if (estTempK < 160.0) evaHours -= 1.5;
+      evaHours = Math.max(2.5, Math.min(8.0, evaHours));
+
+      // Overall synthesis
+      let overall = "SAFE";
+      let score = 92;
+
+      if (tempStatus === "DANGEROUS" || pressStatus === "DANGEROUS" || slopeStatus === "DANGEROUS" || dustStatus === "DANGEROUS") {
+        overall = "DANGEROUS";
+        score = 38;
+      } else if (tempStatus === "UNCERTAIN" || pressStatus === "UNCERTAIN" || slopeStatus === "UNCERTAIN" || dustStatus === "UNCERTAIN") {
+        overall = "UNCERTAIN";
+        score = 68;
+      }
+
+      if (warnings.length === 0) {
+        warnings.push({
+          level: "safe",
+          text: tr(
+            "Nominal Surface Conditions: Gentle slope, stable pressure, within xEMU thermal rejection envelope.",
+            "Điều kiện bề mặt lý tưởng: Độ dốc phẳng, áp suất ổn định, trong dải thải nhiệt danh định của xEMU."
+          )
+        });
+      }
+
+      return {
+        overall,
+        score,
+        tempK: estTempK,
+        pressPa: estPressPa,
+        dust: estDust,
+        slope: slope,
+        evaHours: evaHours,
+        tempStatus,
+        pressStatus,
+        slopeStatus,
+        dustStatus,
+        warnings
+      };
+    }
+
+    function updateHudActiveLayerLabel() {
+      const curMeta = getLayerMeta(appState.selectedLayerId);
+      const reliefTag = tr("3D RELIEF", "ĐỊA HÌNH 3D");
+      const hudEl = document.getElementById('hud-active-layer');
+      if (hudEl) {
+        hudEl.textContent = `${curMeta.name.toUpperCase()} (${reliefTag} ${appState.exaggeration.toFixed(1)}x)`;
+      }
+    }
+
+    // 9. CENTRAL REACTIVE UPDATE DISPATCHER
+    function updateState() {
+      if (!samplePixels) return;
+
+      const lat = appState.selectedLocation.lat;
+      const lon = appState.selectedLocation.lon;
+      const sample = sampleGrid(lat, lon);
+      if (!sample) return;
+
+      // Update Single Source of Truth measurement for currently selected layer
+      const curL = appState.selectedLayerId;
+      const leg = getLayerMeta(curL);
+      let valText = "";
+      let labelText = "";
+      let unit = leg.unit;
+
+      if (curL === "elevation") {
+        valText = `${sample.elevation >= 0 ? '+' : ''}${Math.round(sample.elevation).toLocaleString()} m`;
+        labelText = tr("Selected MOLA Elevation:", "Độ cao MOLA điểm chọn:");
+      } else if (curL === "gravity_120g") {
+        valText = `${sample.gravityAnomaly >= 0 ? '+' : ''}${sample.gravityAnomaly.toFixed(1)} mGal`;
+        labelText = tr("Gravity Anomaly:", "Dị thường trọng lực:");
+      } else if (curL === "slope") {
+        valText = `${sample.slope.toFixed(2)}°`;
+        labelText = tr("Terrain Slope:", "Độ dốc địa hình:");
+      } else if (curL === "surface_g") {
+        valText = `${sample.surfaceG.toFixed(4)} m/s²`;
+        labelText = tr("Surface Gravity g:", "Gia tốc bề mặt g:");
+      } else if (curL === "geoid_n") {
+        valText = `${sample.geoidN >= 0 ? '+' : ''}${Math.round(sample.geoidN)} m`;
+        labelText = tr("Geoid Undulation N:", "Mặt Geoid N:");
+      } else if (curL === "gravity_delta") {
+        valText = `${sample.deltaGravity >= 0 ? '+' : ''}${sample.deltaGravity.toFixed(1)} mGal`;
+        labelText = tr("Model Diff (120G - 120F):", "Vi sai (120G - 120F):");
+      }
+
+      appState.selectedMeasurement = {
+        layerId: curL,
+        name: leg.name,
+        valueText: valText,
+        unit: unit
+      };
+
+      updateHudActiveLayerLabel();
+
+      // 1. Update Bottom Data Display Strip
+      document.getElementById('bottom-measurement-label').textContent = labelText;
+      document.getElementById('bottom-measurement-val').textContent = valText;
+      document.getElementById('bottom-measurement-status').textContent = tr("Bilinear Synchronized", "Đồng bộ nội suy song tuyến");
+
+      // 2. Update Bottom Legend
+      document.getElementById('legend-layer-title').textContent = tr("Scale: ", "Thang Đo: ") + leg.name;
+      document.getElementById('legend-layer-unit').textContent = leg.unit;
+      document.getElementById('legend-color-bar').style.background = leg.gradient;
+      document.getElementById('legend-min').textContent = leg.min;
+      document.getElementById('legend-mid').textContent = leg.mid;
+      document.getElementById('legend-max').textContent = leg.max;
+
+      // 3. Update Astronaut Survival Monitor
+      const survival = evaluateAstronautSurvival(lat, lon, sample);
+      renderSurvivalMonitor(survival);
+
+      // 4. Update Compact Coordinates Card & Details Table
+      let lonEast = lon % 360.0;
+      if (lonEast < 0) lonEast += 360.0;
+      const lonWest = lonEast > 180.0 ? lonEast - 360.0 : lonEast;
+
+      document.getElementById('side-selected-coords').textContent = `${Math.abs(lat).toFixed(2)}° ${lat >= 0 ? 'N' : 'S'}, ${lonEast.toFixed(2)}° E`;
+
+      // Details Table
+      const factor = Math.pow(3396.19 / 3376.20, 2);
+      const latGraph = Math.atan(factor * Math.tan((lat * Math.PI) / 180.0)) * (180.0 / Math.PI);
+      document.getElementById('dtl-lat-graph').textContent = `${Math.abs(latGraph).toFixed(2)}° ${lat >= 0 ? 'N' : 'S'}`;
+      document.getElementById('dtl-lon-west').textContent = `${Math.abs(lonWest).toFixed(2)}° ${lonWest >= 0 ? 'E' : 'W'}`;
+
+      const phi = (lat * Math.PI) / 180.0;
+      const lam = (lonEast * Math.PI) / 180.0;
+      const R = sample.radiusKm;
+      const X = Math.round(R * Math.cos(phi) * Math.cos(lam));
+      const Y = Math.round(R * Math.cos(phi) * Math.sin(lam));
+      const Z = Math.round(R * Math.sin(phi));
+      document.getElementById('dtl-cartesian').textContent = `X=${X}, Y=${Y}, Z=${Z} km`;
+
+      document.getElementById('dtl-elevation').textContent = `${sample.elevation >= 0 ? '+' : ''}${Math.round(sample.elevation).toLocaleString()} m`;
+      document.getElementById('dtl-radius').textContent = `${sample.radiusKm.toFixed(2)} km`;
+      document.getElementById('dtl-slope').textContent = `${sample.slope.toFixed(2)}°`;
+      document.getElementById('dtl-dg').textContent = `${sample.gravityAnomaly >= 0 ? '+' : ''}${sample.gravityAnomaly.toFixed(1)} mGal`;
+      document.getElementById('dtl-surfg').textContent = `${sample.surfaceG.toFixed(4)} m/s²`;
+      document.getElementById('dtl-geoid').textContent = `${sample.geoidN >= 0 ? '+' : ''}${Math.round(sample.geoidN)} m`;
+      document.getElementById('dtl-delta').textContent = `${sample.deltaGravity >= 0 ? '+' : ''}${sample.deltaGravity.toFixed(1)} mGal`;
+
+      // MCS Soundings query
+      let nearestSounding = null;
+      let minDistanceKm = 1e9;
+      for (const track of mcsTracks) {
+        const dLat = (lat - track.lat) * 59.27;
+        const dLon = (lonEast - track.lon) * 59.27 * Math.cos(phi);
+        const dist = Math.hypot(dLat, dLon);
+        if (dist < minDistanceKm) {
+          minDistanceKm = dist;
+          nearestSounding = track;
+        }
+      }
+      if (nearestSounding) {
+        document.getElementById('dtl-mcs-id').textContent = tr(
+          `#${nearestSounding.id} (${Math.round(minDistanceKm)} km away)`,
+          `#${nearestSounding.id} (cách ${Math.round(minDistanceKm)} km)`
+        );
+        renderMcsVerticalChart(mcsSoundings[nearestSounding.id]);
+      }
+
+      renderCrossSection(lat, lonEast);
+
+      // Synchronize 2D Map Link & Storage
+      const link2D = document.getElementById('link2DMap');
+      if (link2D) {
+        link2D.href = `mars_2d_map.html?lat=${lat.toFixed(2)}&lon=${lon.toFixed(2)}&layer=${curL}`;
+      }
+      try {
+        localStorage.setItem('mars_active_coords', JSON.stringify({ lat, lon, layer: curL }));
+        window.history.replaceState(null, '', `?lat=${lat.toFixed(2)}&lon=${lon.toFixed(2)}&layer=${curL}`);
+      } catch (_) {}
+    }
+
+    // 10. RENDER ASTRONAUT SURVIVAL MONITOR UI
+    function renderSurvivalMonitor(s) {
+      const banner = document.getElementById('survival-banner');
+      const dot = document.getElementById('survival-dot');
+      const title = document.getElementById('survival-status-title');
+      const sub = document.getElementById('survival-status-sub');
+      const score = document.getElementById('survival-score');
+
+      banner.className = `p-2.5 rounded-xl border flex items-center justify-between gap-3 shadow-lg transition-all duration-300 status-${s.overall.toLowerCase()}`;
+      score.textContent = `${s.score}/100`;
+
+      if (s.overall === "SAFE") {
+        dot.className = "w-3.5 h-3.5 rounded-full bg-emerald-400 animate-pulse shadow";
+        title.textContent = tr("SAFE", "AN TOÀN – SAFE");
+        sub.textContent = tr(
+          "Environmental parameters fully within xEMU operating limits",
+          "Các thông số môi trường hoàn toàn trong ngưỡng hoạt động xEMU"
+        );
+      } else if (s.overall === "UNCERTAIN") {
+        dot.className = "w-3.5 h-3.5 rounded-full bg-accent animate-pulse shadow";
+        title.textContent = tr("UNCERTAIN / CAUTION", "KHÔNG ĐẢM BẢO – UNCERTAIN");
+        sub.textContent = tr(
+          "Parameters approaching caution thresholds: Mini-ME backpressure adjustment advised",
+          "Có thông số tiếp cận ngưỡng hạn chế: Cần điều chỉnh đối áp Mini-ME"
+        );
+      } else {
+        dot.className = "w-3.5 h-3.5 rounded-full bg-red-400 animate-pulse shadow";
+        title.textContent = tr("DANGEROUS", "NGUY HIỂM – DANGEROUS");
+        sub.textContent = tr(
+          "Critical survival limit violation: EVA sortie prohibited!",
+          "Vi phạm giới hạn sinh tồn nghiêm trọng: Cấm xuất phát EVA!"
+        );
+      }
+
+      // Gauges
+      document.getElementById('val-temp').textContent = `${s.tempK.toFixed(1)} K`;
+      const tempCEl = document.getElementById('val-temp-c');
+      if (tempCEl) tempCEl.textContent = `${(s.tempK - 273.15).toFixed(1)}°C`;
+
+      document.getElementById('val-press').textContent = `${s.pressPa.toFixed(1)} Pa`;
+      const pressMbarEl = document.getElementById('val-press-mbar');
+      if (pressMbarEl) pressMbarEl.textContent = `${(s.pressPa / 100.0).toFixed(1)} mbar`;
+
+      document.getElementById('val-slope').textContent = `${s.slope.toFixed(1)}°`;
+      const slopeDescEl = document.getElementById('val-slope-desc');
+      if (slopeDescEl) {
+        slopeDescEl.textContent = s.slope < 5.0
+          ? tr("Flat / Gentle", "Phẳng / Thoải")
+          : (s.slope < 15.0 ? tr("Moderate", "Dốc vừa") : tr("Steep Hazard", "Dốc hiểm trở"));
+      }
+
+      document.getElementById('val-dust').textContent = `${s.dust.toFixed(4)}`;
+      const dustDescEl = document.getElementById('val-dust-desc');
+      if (dustDescEl) {
+        dustDescEl.textContent = s.dust <= 0.15
+          ? tr("Clear Sky", "Quang đãng")
+          : (s.dust <= 0.5 ? tr("Suspended Dust", "Bụi lơ lửng") : tr("Dust Storm", "Bão bụi"));
+      }
+      const dustRcaEl = document.getElementById('val-dust-rca');
+      if (dustRcaEl) {
+        dustRcaEl.textContent = s.dust <= 0.5 ? tr("Nominal", "Danh định") : tr("Clog Risk", "Nguy cơ tắc");
+      }
+
+      document.getElementById('val-eva-duration').textContent = `${s.evaHours.toFixed(1)} ${tr("Hours (SOR Limit 8h)", "Giờ (Giới hạn SOR 8h)")}`;
+
+      function setStatusBadge(id, status) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = status === 'SAFE'
+          ? tr('SAFE', 'AN TOÀN')
+          : (status === 'UNCERTAIN' ? tr('CAUTION', 'CẢNH BÁO') : tr('DANGEROUS', 'NGUY HIỂM'));
+        el.className = `mono font-bold ${status === 'SAFE' ? 'text-emerald-400' : (status === 'UNCERTAIN' ? 'text-secondary' : 'text-red-400')}`;
+      }
+      setStatusBadge('gauge-temp-status', s.tempStatus);
+      setStatusBadge('gauge-press-status', s.pressStatus);
+      setStatusBadge('gauge-slope-status', s.slopeStatus);
+      setStatusBadge('gauge-dust-status', s.dustStatus);
+
+      // Warnings
+      const warningsEl = document.getElementById('warnings-list');
+      warningsEl.innerHTML = '';
+      s.warnings.forEach(w => {
+        const item = document.createElement('div');
+        const level = typeof w === 'object' ? w.level : (w.includes("Nguy hiểm") ? 'danger' : ((w.includes("Cảnh báo") || w.includes("Khuyến nghị")) ? 'warn' : 'safe'));
+        const text = typeof w === 'object' ? w.text : w;
+        item.className = `p-1.5 rounded bg-panel border ${level === 'danger' ? 'border-red-500/40 text-red-300' : (level === 'warn' ? 'border-strong text-secondary' : 'border-emerald-500/30 text-emerald-300')}`;
+        item.innerHTML = text;
+        warningsEl.appendChild(item);
+      });
+    }
+
+    // 11. Collapsible Details Toggle
+    const btnToggleDetails = document.getElementById('btn-toggle-details');
+    const collapsibleDetails = document.getElementById('collapsible-details');
+    let detailsOpen = false;
+
+    function updateDetailsToggleText() {
+      const el = document.getElementById('text-details-toggle');
+      if (el) {
+        el.textContent = detailsOpen ? tr('COLLAPSE ▲', 'THU GỌN ▲') : tr('DETAILS ▼', 'CHI TIẾT ▼');
+      }
+    }
+
+    btnToggleDetails.addEventListener('click', () => {
+      detailsOpen = !detailsOpen;
+      collapsibleDetails.classList.toggle('hidden', !detailsOpen);
+      updateDetailsToggleText();
+    });
+
+    // 12. Top Horizontal Layer Switcher Handling
+    document.querySelectorAll('.layer-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const layerId = tab.getAttribute('data-layer');
+        appState.selectedLayerId = layerId;
+
+        document.querySelectorAll('.layer-tab').forEach(t => {
+          t.classList.remove('active');
+          t.classList.add('text-secondary');
+        });
+        tab.classList.add('active');
+        tab.classList.remove('text-secondary');
+
+        if (loadedTextures[layerId]) {
+          activeTexture = loadedTextures[layerId];
+        }
+
+        updateHudActiveLayerLabel();
+
+        // Immediately update without changing coordinates
+        updateState();
+      });
+    });
+
+    // 13. Exaggeration Sliders & Presets
+    const exagSlider = document.getElementById('slider-exaggeration');
+    const exagLabel = document.getElementById('label-exaggeration');
+
+    function setExaggeration(val) {
+      appState.exaggeration = val;
+      exagLabel.textContent = val.toFixed(1) + 'x';
+      exagSlider.value = Math.round(val * 10);
+
+      document.querySelectorAll('.btn-exag').forEach(btn => {
+        const btnVal = parseFloat(btn.getAttribute('data-exag'));
+        const isMatch = Math.abs(btnVal - val) < 0.1;
+        btn.className = `btn-exag px-1.5 py-1 rounded ${isMatch ? 'bg-accent-soft border border-accent text-accent font-bold' : 'bg-soft hover:bg-hover border border-subtle text-secondary'} text-[10px] mono transition cursor-pointer`;
+      });
+      updateHudActiveLayerLabel();
+    }
+
+    exagSlider.addEventListener('input', (e) => {
+      const v = parseFloat(e.target.value) / 10.0;
+      setExaggeration(v);
+    });
+
+    document.querySelectorAll('.btn-exag').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const v = parseFloat(btn.getAttribute('data-exag'));
+        setExaggeration(v);
+      });
+    });
+
+    // Opacity
+    document.getElementById('slider-opacity').addEventListener('input', (e) => {
+      appState.layerOpacity = parseFloat(e.target.value) / 100.0;
+      document.getElementById('label-opacity').textContent = e.target.value + '%';
+    });
+
+    // Toggles
+    document.getElementById('toggle-grid').addEventListener('click', () => {
+      appState.showGrid = !appState.showGrid;
+      document.getElementById('dot-grid').className = `w-2 h-2 rounded-full ${appState.showGrid ? 'bg-accent-hover' : 'bg-hover'}`;
+    });
+
+    document.getElementById('toggle-landmarks').addEventListener('click', () => {
+      appState.showLandmarks = !appState.showLandmarks;
+      document.getElementById('pins-landmarks-container').style.display = appState.showLandmarks ? 'block' : 'none';
+      document.getElementById('dot-landmarks').className = `w-2 h-2 rounded-full ${appState.showLandmarks ? 'bg-accent' : 'bg-hover'}`;
+    });
+
+    document.getElementById('toggle-mcs-tracks').addEventListener('click', () => {
+      appState.showMcsTracks = !appState.showMcsTracks;
+      document.getElementById('pins-mcs-container').style.display = appState.showMcsTracks ? 'block' : 'none';
+      document.getElementById('dot-mcs').className = `w-2 h-2 rounded-full ${appState.showMcsTracks ? 'bg-accent' : 'bg-hover'}`;
+    });
+
+    function updateAutorotateLabel() {
+      const el = document.getElementById('text-autorotate');
+      if (el) {
+        el.textContent = appState.autoRotate
+          ? tr('Auto-Rotate', 'Tự động quay')
+          : tr('Resume Rotate', 'Tiếp tục xoay');
+      }
+    }
+
+    document.getElementById('toggle-autorotate').addEventListener('click', () => {
+      appState.autoRotate = !appState.autoRotate;
+      document.getElementById('dot-autorotate').className = `w-2 h-2 rounded-full ${appState.autoRotate ? 'bg-accent-hover animate-pulse' : 'bg-hover'}`;
+      updateAutorotateLabel();
+    });
+
+    document.getElementById('btn-reset-view').addEventListener('click', () => {
+      targetRotation.pitch = initialPitch;
+      targetRotation.yaw = initialYaw;
+      targetCameraDistance = 2.45;
+    });
+
+    const fullscreenButton = document.getElementById('btn-fullscreen');
+    const root = document.documentElement;
+    const lockOverlay = document.createElement('div');
+    lockOverlay.className = 'fullscreen-lock-overlay';
+    lockOverlay.hidden = true;
+    lockOverlay.setAttribute('role', 'dialog');
+    lockOverlay.setAttribute('aria-modal', 'true');
+    lockOverlay.setAttribute('aria-label', tr('Fullscreen interrupted', 'Toàn màn hình bị gián đoạn'));
+    const resumeFullscreenButton = document.createElement('button');
+    resumeFullscreenButton.type = 'button';
+    resumeFullscreenButton.textContent = tr('Return to Fullscreen', 'Quay lại Fullscreen');
+    lockOverlay.appendChild(resumeFullscreenButton);
+    root.appendChild(lockOverlay);
+
+    let isFullscreenLocked = false;
+    let nativeFullscreenWasActive = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+    let bodyWasInert = document.body.inert;
+    const isIPhone = /iPhone|iPod/i.test(navigator.userAgent);
+    const getFullscreenElement = () => document.fullscreenElement || document.webkitFullscreenElement;
+    const updateFullscreenButton = () => {
+      const isActive = isFullscreenLocked || Boolean(getFullscreenElement());
+      fullscreenButton.setAttribute('aria-pressed', String(isActive));
+      const lbl = isActive ? tr('Exit fullscreen', 'Thoát toàn màn hình') : tr('Enter fullscreen', 'Toàn màn hình');
+      fullscreenButton.setAttribute('aria-label', lbl);
+      fullscreenButton.title = lbl;
+    };
+    const showLockOverlay = () => {
+      if (lockOverlay.hidden) bodyWasInert = document.body.inert;
+      document.body.inert = true;
+      lockOverlay.hidden = false;
+      resumeFullscreenButton.focus();
+    };
+    const hideLockOverlay = () => {
+      lockOverlay.hidden = true;
+      document.body.inert = bodyWasInert;
+    };
+    const enterFullscreen = async (fromOverlay) => {
+      isFullscreenLocked = true;
+      root.classList.add('app-immersive');
+      updateFullscreenButton();
+      try {
+        if (typeof root.requestFullscreen === 'function') {
+          try {
+            await root.requestFullscreen();
+          } catch (error) {
+            if (typeof root.webkitRequestFullscreen !== 'function') throw error;
+            await root.webkitRequestFullscreen();
+          }
+        } else if (typeof root.webkitRequestFullscreen === 'function') {
+          await root.webkitRequestFullscreen();
+        } else {
+          console.info('Native fullscreen is unavailable; using the immersive layout.');
+        }
+      } catch (error) {
+        console.warn('Native fullscreen could not start.', error);
+      }
+
+      if (getFullscreenElement()) {
+        nativeFullscreenWasActive = true;
+        root.classList.remove('ios-app-immersive');
+        hideLockOverlay();
+      } else if (isIPhone) {
+        root.classList.add('ios-app-immersive');
+        hideLockOverlay();
+      } else if (fromOverlay) {
+        showLockOverlay();
+      } else {
+        hideLockOverlay();
+      }
+      updateFullscreenButton();
+    };
+    const exitFullscreen = async () => {
+      const wasNativeFullscreen = Boolean(getFullscreenElement());
+      isFullscreenLocked = false;
+      nativeFullscreenWasActive = false;
+      root.classList.remove('app-immersive', 'ios-app-immersive');
+      hideLockOverlay();
+      try {
+        const exit = document.exitFullscreen || document.webkitExitFullscreen;
+        if (wasNativeFullscreen && typeof exit === 'function') {
+          await exit.call(document);
+        } else if (wasNativeFullscreen) {
+          console.error('The browser does not provide a fullscreen exit method.');
+        }
+      } catch (error) {
+        console.error('Could not exit fullscreen.', error);
+      }
+      updateFullscreenButton();
+    };
+    const handleFullscreenChange = () => {
+      if (getFullscreenElement()) {
+        nativeFullscreenWasActive = true;
+        root.classList.remove('ios-app-immersive');
+        hideLockOverlay();
+      } else if (isFullscreenLocked && nativeFullscreenWasActive) {
+        nativeFullscreenWasActive = false;
+        showLockOverlay();
+      }
+      updateFullscreenButton();
+    };
+    fullscreenButton.addEventListener('click', () => {
+      if (isFullscreenLocked || getFullscreenElement()) {
+        exitFullscreen();
+      } else {
+        enterFullscreen(false);
+      }
+    });
+    resumeFullscreenButton.addEventListener('click', () => enterFullscreen(true));
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    updateFullscreenButton();
+
+    // Landmark Select Dropdown
+    const selectLandmarkEl = document.getElementById('select-landmark');
+    landmarks.forEach(lm => {
+      const opt = document.createElement('option');
+      opt.value = lm.id;
+      opt.textContent = `${lm.name} (${lm.lat >= 0 ? '+' : ''}${lm.lat.toFixed(1)}°, ${lm.lon.toFixed(1)}°)`;
+      selectLandmarkEl.appendChild(opt);
+
+      // Precalc Cartesian pos on unit sphere
+      const theta = ((90.0 - lm.lat) * Math.PI) / 180.0;
+      const phi = (lm.lon * Math.PI) / 180.0;
+      lm.pos = [
+        -Math.sin(theta) * Math.cos(phi),
+        Math.cos(theta),
+        Math.sin(theta) * Math.sin(phi)
+      ];
+
+      const pin = document.createElement('div');
+      pin.className = 'landmark-pin flex flex-col items-center';
+      pin.innerHTML = `
+        <div class="px-2 py-0.5 rounded-md bg-panel backdrop-blur border border-accent text-accent text-[10px] mono font-bold shadow-lg whitespace-nowrap">
+          ${lm.name}
+        </div>
+        <div class="w-2.5 h-2.5 rounded-full bg-accent border-2 border-subtle shadow-md animate-pulse"></div>
+      `;
+      pin.addEventListener('click', (e) => {
+        e.stopPropagation();
+        focusLandmark(lm);
+      });
+      document.getElementById('pins-landmarks-container').appendChild(pin);
+      lm.pinEl = pin;
+    });
+
+    function focusLandmark(lm) {
+      targetRotation.pitch = (lm.lat * Math.PI) / 180.0;
+      targetRotation.yaw = Math.PI / 2.0 - (lm.lon * Math.PI) / 180.0;
+      appState.autoRotate = false;
+      document.getElementById('dot-autorotate').className = "w-2 h-2 rounded-full bg-hover";
+      updateAutorotateLabel();
+      appState.selectedLocation = { lat: lm.lat, lon: lm.lon };
+      updateState();
+    }
+
+    selectLandmarkEl.addEventListener('change', (e) => {
+      const lm = landmarks.find(l => l.id === e.target.value);
+      if (lm) focusLandmark(lm);
+    });
+
+    // Search by Coordinates
+    document.getElementById('btn-search-coords').addEventListener('click', () => {
+      const latVal = parseFloat(document.getElementById('input-search-lat').value);
+      const lonVal = parseFloat(document.getElementById('input-search-lon').value);
+      if (isNaN(latVal) || isNaN(lonVal)) {
+        alert(tr(
+          "Please enter valid latitude (-90 to +90) and longitude (0 to 360).",
+          "Vui lòng nhập vĩ độ (-90 đến +90) và kinh độ (0 đến 360)."
+        ));
+        return;
+      }
+      const clampLat = Math.max(-90, Math.min(90, latVal));
+      let normLon = lonVal % 360;
+      if (normLon < 0) normLon += 360;
+
+      targetRotation.pitch = (clampLat * Math.PI) / 180.0;
+      targetRotation.yaw = Math.PI / 2.0 - (normLon * Math.PI) / 180.0;
+      appState.autoRotate = false;
+      updateAutorotateLabel();
+      appState.selectedLocation = { lat: clampLat, lon: normLon };
+      updateState();
+    });
+
+    // 14. SVG Visualizers: MCS Vertical Sounding & Cross-Section
+    function renderMcsVerticalChart(sounding) {
+      const container = document.getElementById('mcs-chart-container');
+      container.innerHTML = '';
+      if (!sounding || !sounding.levels || sounding.levels.length < 2) {
+        container.innerHTML = `<span class="text-[10px] text-muted">${tr('Vertical profile data unavailable for this region', 'Dữ liệu thẳng đứng chưa khả dụng tại vùng này')}</span>`;
+        return;
+      }
+      const validLvls = sounding.levels.filter(l => l.alt >= 0 && l.t > 0);
+      if (validLvls.length < 2) return;
+
+      const w = Math.max(0, container.clientWidth - 16);
+      const h = Math.max(0, container.clientHeight - 16);
+      if (w < 20 || h < 20) return;
+      const minT = Math.min(...validLvls.map(l => l.t));
+      const maxT = Math.max(...validLvls.map(l => l.t));
+      const maxAlt = Math.max(...validLvls.map(l => l.alt));
+
+      const pts = validLvls.map(l => {
+        const x = ((l.t - minT) / (maxT - minT || 1)) * w;
+        const y = h - (l.alt / maxAlt) * h;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(' ');
+
+      container.innerHTML = `
+        <svg width="${w}" height="${h}" class="overflow-visible">
+          <line x1="0" y1="${h*0.5}" x2="${w}" y2="${h*0.5}" stroke="rgba(var(--text-secondary-rgb), 0.25)" stroke-dasharray="2 2" />
+          <polyline fill="none" stroke="var(--text-secondary)" stroke-width="2" points="${pts}" stroke-linejoin="round" />
+          <text x="4" y="${h - 2}" fill="var(--text-secondary)" font-size="8" font-family="JetBrains Mono">${minT.toFixed(0)} K</text>
+          <text x="${w - 4}" y="${h - 2}" fill="var(--text-secondary)" font-size="8" font-family="JetBrains Mono" text-anchor="end">${maxT.toFixed(0)} K</text>
+        </svg>
+      `;
+    }
+
+    function renderCrossSection(centerLat, centerLon) {
+      const container = document.getElementById('cross-section-container');
+      container.innerHTML = '';
+      if (!samplePixels) return;
+
+      const w = Math.max(0, container.clientWidth - 16);
+      const h = Math.max(0, container.clientHeight - 16);
+      if (w < 20 || h < 20) return;
+
+      const numSamples = 28;
+      const samples = [];
+      const dLonDeg = (250 / (59.27 * Math.cos((centerLat * Math.PI) / 180.0)));
+
+      for (let i = 0; i < numSamples; i++) {
+        const frac = (i / (numSamples - 1)) * 2.0 - 1.0;
+        const sLon = centerLon + frac * dLonDeg;
+        const res = sampleGrid(centerLat, sLon);
+        if (res) samples.push(res.elevation);
+      }
+
+      if (samples.length < 2) return;
+      const minE = Math.min(...samples);
+      const maxE = Math.max(...samples);
+
+      const pts = samples.map((e, idx) => {
+        const x = (idx / (numSamples - 1)) * w;
+        const y = h - ((e - minE) / (maxE - minE || 1)) * (h - 6) - 3;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(' ');
+
+      container.innerHTML = `
+        <svg width="${w}" height="${h}" class="overflow-visible">
+          <polygon points="0,${h} ${pts} ${w},${h}" fill="var(--accent-soft)" />
+          <polyline fill="none" stroke="var(--text-secondary)" stroke-width="1.8" points="${pts}" />
+          <line x1="${w/2}" y1="0" x2="${w/2}" y2="${h}" stroke="var(--accent-telemetry)" stroke-opacity="0.75" stroke-width="1.5" stroke-dasharray="2 2" />
+        </svg>
+      `;
+    }
+
+    // 15. Raycasting & Mouse Orbit
+    let isDragging = false;
+    let lastMouseX = 0, lastMouseY = 0;
+
+    canvas.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+      appState.autoRotate = false;
+      document.getElementById('dot-autorotate').className = "w-2 h-2 rounded-full bg-hover";
+      updateAutorotateLabel();
+    });
+
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+    window.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        const dx = e.clientX - lastMouseX;
+        const dy = e.clientY - lastMouseY;
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+
+        targetRotation.yaw += dx * 0.006;
+        targetRotation.pitch += dy * 0.006;
+        targetRotation.pitch = Math.max(-Math.PI / 2 + 0.05, Math.min(Math.PI / 2 - 0.05, targetRotation.pitch));
+      }
+      handleRaycast(e, false);
+    });
+
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      targetCameraDistance += e.deltaY * 0.0015;
+      targetCameraDistance = Math.max(1.35, Math.min(4.8, targetCameraDistance));
+    }, { passive: false });
+
+    canvas.addEventListener('click', (e) => {
+      handleRaycast(e, true);
+    });
+
+    function handleRaycast(e, isClick = false) {
+      if (!samplePixels) return;
+      const rect = canvas.getBoundingClientRect();
+      if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return;
+
+      const ndcX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      const ndcY = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+
+      const fovY = (45 * Math.PI) / 180;
+      const aspect = rect.width / rect.height;
+      const tanHalfFov = Math.tan(fovY / 2);
+
+      const rayDirCam = [
+        ndcX * tanHalfFov * aspect,
+        ndcY * tanHalfFov,
+        -1.0
+      ];
+      const len = Math.hypot(rayDirCam[0], rayDirCam[1], rayDirCam[2]);
+      rayDirCam[0] /= len; rayDirCam[1] /= len; rayDirCam[2] /= len;
+
+      const rayOrigCam = [0, 0, cameraDistance];
+      const b = rayOrigCam[0]*rayDirCam[0] + rayOrigCam[1]*rayDirCam[1] + rayOrigCam[2]*rayDirCam[2];
+      const c = (rayOrigCam[0]*rayOrigCam[0] + rayOrigCam[1]*rayOrigCam[1] + rayOrigCam[2]*rayOrigCam[2]) - 1.0;
+      const disc = b*b - c;
+
+      if (disc >= 0) {
+        const t = -b - Math.sqrt(disc);
+        const pCam = [
+          rayOrigCam[0] + t * rayDirCam[0],
+          rayOrigCam[1] + t * rayDirCam[1],
+          rayOrigCam[2] + t * rayDirCam[2]
+        ];
+
+        const cp = Math.cos(currentRotation.pitch), sp = Math.sin(currentRotation.pitch);
+        const cy = Math.cos(currentRotation.yaw), sy = Math.sin(currentRotation.yaw);
+
+        const x1 = pCam[0];
+        const y1 = cp * pCam[1] + sp * pCam[2];
+        const z1 = -sp * pCam[1] + cp * pCam[2];
+
+        const xMars = cy * x1 - sy * z1;
+        const yMars = y1;
+        const zMars = sy * x1 + cy * z1;
+
+        const latRad = Math.asin(Math.max(-1.0, Math.min(1.0, yMars)));
+        const latDeg = (latRad * 180.0) / Math.PI;
+
+        let phi = Math.atan2(zMars, -xMars);
+        if (phi < 0) phi += 2 * Math.PI;
+        const lonDeg = (phi * 180.0) / Math.PI;
+
+        // Hover tooltip
+        document.getElementById('hover-coords').textContent = `${Math.abs(latDeg).toFixed(1)}°${latDeg>=0?'N':'S'}, ${lonDeg.toFixed(1)}°E`;
+        const s = sampleGrid(latDeg, lonDeg);
+        if (s) {
+          if (appState.selectedLayerId === "elevation") {
+            document.getElementById('hover-val').textContent = `${s.elevation >= 0 ? '+' : ''}${Math.round(s.elevation)} m`;
+          } else if (appState.selectedLayerId === "gravity_120g") {
+            document.getElementById('hover-val').textContent = `${s.gravityAnomaly >= 0 ? '+' : ''}${s.gravityAnomaly.toFixed(1)} mGal`;
+          } else if (appState.selectedLayerId === "slope") {
+            document.getElementById('hover-val').textContent = `${s.slope.toFixed(1)}°`;
+          } else if (appState.selectedLayerId === "geoid_n") {
+            document.getElementById('hover-val').textContent = `${s.geoidN >= 0 ? '+' : ''}${Math.round(s.geoidN)} m`;
+          } else if (appState.selectedLayerId === "gravity_delta") {
+            document.getElementById('hover-val').textContent = `${s.deltaGravity >= 0 ? '+' : ''}${s.deltaGravity.toFixed(1)} mGal`;
+          } else {
+            document.getElementById('hover-val').textContent = `${s.surfaceG.toFixed(4)} m/s²`;
+          }
+        }
+
+        if (isClick) {
+          appState.selectedLocation = { lat: latDeg, lon: lonDeg };
+          updateState();
+        }
+      }
+    }
+
+    // 16. Render Loop with 3D Normal Lighting
+    function resizeCanvas() {
+      const displayWidth = canvas.clientWidth * window.devicePixelRatio;
+      const displayHeight = canvas.clientHeight * window.devicePixelRatio;
+      if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+      }
+    }
+
+    const projMatrix = mat4Create();
+    const mvMatrix = mat4Create();
+    const normMatrix = new Float32Array(9);
+
+    function updatePins(container, pinList) {
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      const cp = Math.cos(currentRotation.pitch), sp = Math.sin(currentRotation.pitch);
+      const cy = Math.cos(currentRotation.yaw), sy = Math.sin(currentRotation.yaw);
+
+      const fovY = (45 * Math.PI) / 180;
+      const aspect = width / height;
+      const tanHalfFov = Math.tan(fovY / 2);
+
+      for (const item of pinList) {
+        if (!item.pinEl) continue;
+        const x = item.pos[0], y = item.pos[1], z = item.pos[2];
+
+        const xc = cy * x + sy * z;
+        const yc = sp * sy * x + cp * y - sp * cy * z;
+        const zc = -cp * sy * x + sp * y + cp * cy * z;
+        const camZ = zc - cameraDistance;
+
+        if (zc > 0.15 && camZ < -0.1) {
+          const projX = (xc / -camZ) / (tanHalfFov * aspect);
+          const projY = (yc / -camZ) / tanHalfFov;
+
+          const screenX = (projX * 0.5 + 0.5) * width;
+          const screenY = (-projY * 0.5 + 0.5) * height;
+
+          item.pinEl.style.display = 'flex';
+          item.pinEl.style.left = `${screenX}px`;
+          item.pinEl.style.top = `${screenY}px`;
+          item.pinEl.style.opacity = Math.max(0.2, Math.min(1.0, (zc - 0.15) * 2.5));
+        } else {
+          item.pinEl.style.display = 'none';
+        }
+      }
+    }
+
+    function updateReticle() {
+      const reticle = document.getElementById('selected-reticle');
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+
+      const theta = ((90.0 - appState.selectedLocation.lat) * Math.PI) / 180.0;
+      const phi = (appState.selectedLocation.lon * Math.PI) / 180.0;
+      const x = -Math.sin(theta) * Math.cos(phi);
+      const y = Math.cos(theta);
+      const z = Math.sin(theta) * Math.sin(phi);
+
+      const cp = Math.cos(currentRotation.pitch), sp = Math.sin(currentRotation.pitch);
+      const cy = Math.cos(currentRotation.yaw), sy = Math.sin(currentRotation.yaw);
+
+      const xc = cy * x + sy * z;
+      const yc = sp * sy * x + cp * y - sp * cy * z;
+      const zc = -cp * sy * x + sp * y + cp * cy * z;
+      const camZ = zc - cameraDistance;
+
+      if (zc > 0.05 && camZ < -0.1) {
+        const fovY = (45 * Math.PI) / 180;
+        const aspect = width / height;
+        const tanHalfFov = Math.tan(fovY / 2);
+
+        const projX = (xc / -camZ) / (tanHalfFov * aspect);
+        const projY = (yc / -camZ) / tanHalfFov;
+
+        const screenX = (projX * 0.5 + 0.5) * width;
+        const screenY = (-projY * 0.5 + 0.5) * height;
+
+        reticle.classList.remove('hidden');
+        reticle.style.left = `${screenX}px`;
+        reticle.style.top = `${screenY}px`;
+        document.getElementById('reticle-coords').textContent = `${Math.abs(appState.selectedLocation.lat).toFixed(1)}°${appState.selectedLocation.lat>=0?'N':'S'}, ${appState.selectedLocation.lon.toFixed(1)}°E`;
+      } else {
+        reticle.classList.add('hidden');
+      }
+    }
+
+    // 17. Bilingual Localization (ENG / VIE) Reactive Dispatcher
+    function setElText(id, en, vi) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = tr(en, vi);
+    }
+
+    function apply3DPageLocalization() {
+      const lang = window.getEvaLang ? window.getEvaLang() : 'en';
+      document.documentElement.lang = lang;
+      document.title = tr(
+        "EVA Mars Explorer – 3D Terrain & Astronaut Survival Monitor",
+        "EVA Mars Explorer – Địa Hình 3D & Giám Sát Sinh Tồn Phi Hành Gia"
+      );
+
+      document.querySelectorAll('[data-lang-btn]').forEach((btn) => {
+        const isMatch = btn.getAttribute('data-lang-btn') === lang;
+        btn.classList.toggle('active', isMatch);
+        btn.setAttribute('aria-pressed', String(isMatch));
+      });
+
+      // Top Header & Navigation
+      setElText('label-search-coords', 'Coords:', 'Tọa độ:');
+      const latIn = document.getElementById('input-search-lat');
+      if (latIn) latIn.placeholder = tr('Lat', 'Vĩ độ');
+      const lonIn = document.getElementById('input-search-lon');
+      if (lonIn) lonIn.placeholder = tr('Lon', 'Kinh độ');
+      setElText('btn-search-coords', 'Fly To', 'Tới');
+      setElText('label-select-landmark', 'Landmarks:', 'Địa danh:');
+      setElText('opt-landmark-default', '-- Select Landmark --', '-- Chọn địa danh --');
+      setElText('label-link-2d-map', '2D Map (72 Tiles LOD)', 'Bản đồ 2D (72 Ô)');
+      setElText('label-btn-reset', 'Reset', 'Đặt lại');
+      setElText('label-btn-fullscreen', 'Full', 'Toàn màn');
+
+      // Horizontal Data Layer Tabs
+      setElText('tab-label-elevation', '⛰️ MOLA Elevation', '⛰️ Độ Cao MOLA');
+      setElText('tab-label-gravity_120g', '🌌 Gravity Anomaly', '🌌 Dị Thường Trọng Lực');
+      setElText('tab-label-slope', '📐 Surface Slope', '📐 Độ Dốc Bề Mặt');
+      setElText('tab-unit-slope', 'deg (°)', 'độ (°)');
+      setElText('tab-label-surface_g', '⚡ Surface Gravity g', '⚡ Gia Tốc Bề Mặt g');
+      setElText('tab-label-geoid_n', '🌐 Geoid Undulation N', '🌐 Mặt Geoid N');
+      setElText('tab-label-gravity_delta', '🔄 Gravity Diff (120G - 120F)', '🔄 Vi Sai Trọng Lực (120G - 120F)');
+      setElText('label-mcs-tracks', 'MCS Sounding Tracks (1,153)', 'Vết đo MCS (1.153)');
+
+      // Left Sidebar
+      setElText('title-3d-exag', '3D Terrain Relief', 'Độ Nổi Địa Hình 3D');
+      setElText(
+        'desc-3d-exag',
+        'Real 3D radial displacement: Olympus & Tharsis Montes rise high, Hellas Basin sinks deep.',
+        'Biến dạng bán kính thực 3D: Olympus & Tharsis Montes nhô cao, hố sâu Hellas lõm xuống.'
+      );
+      setElText('title-space-display', 'Space Display', 'Hiển Thị Không Gian');
+      setElText('label-toggle-grid', 'Lat/Lon Grid 30°', 'Lưới Kinh Vĩ 30°');
+      setElText('label-toggle-landmarks', 'Pin 13 Landmarks', 'Ghim 13 Địa danh');
+      updateAutorotateLabel();
+      setElText('label-opacity-title', 'Layer Opacity:', 'Độ Mờ Lớp Dữ Liệu:');
+      setElText('title-nasa-sources', 'NASA Data Sources', 'Nguồn Dữ Liệu NASA');
+      setElText('nasa-source-suit', '• Suit: NASA xEMU Standard', '• Suit: Chuẩn NASA xEMU');
+
+      // Globe HUD
+      setElText('cursor-hud-label', '🖱️ Cursor:', '🖱️ Con trỏ:');
+      updateHudActiveLayerLabel();
+
+      // Right Sidebar: Astronaut Survival Monitor
+      setElText('surv-monitor-title', 'ASTRONAUT SURVIVAL MONITOR', 'GIÁM SÁT SINH TỒN PHI HÀNH GIA');
+      setElText('surv-monitor-sub', 'NASA xEMU Standard • Mars Ambient Model', 'Chuẩn NASA xEMU • Mô hình Môi trường Sao Hỏa');
+      setElText('surv-monitor-badge', 'EVA Monitor', 'Giám sát EVA');
+      setElText('survival-score-label', 'Survival Index', 'Chỉ số sinh tồn');
+      setElText('label-param-temp', 'Temperature (T):', 'Nhiệt độ (T):');
+      setElText('label-param-temp-limit', 'xEMU Limit:', 'Ngưỡng xEMU:');
+      setElText('label-param-press', 'Pressure (P):', 'Áp suất (P):');
+      setElText('label-param-press-limit', 'HUT ΔP:', 'Chênh áp HUT:');
+      setElText('label-param-slope', 'Terrain Slope:', 'Độ dốc địa hình:');
+      setElText('label-param-slope-limit', 'Fall Limit:', 'Giới hạn ngã:');
+      setElText('label-param-dust', 'Airborne Dust (τ):', 'Mật độ bụi (τ):');
+      setElText('label-param-dust-limit', 'RCA Filter:', 'Lọc bụi RCA:');
+      setElText('label-eva-duration', 'Estimated Safe EVA Duration:', 'Thời gian hoạt động EVA an toàn ước tính:');
+      setElText('label-lib-battery', 'LIB Battery: 20.5V 40Ah', 'Pin LIB: 20.5V 40Ah');
+      setElText('label-sor-press', 'SOR Limit: 8 Hours', 'Áp suất SOR: 8 Giờ');
+      setElText('label-warnings-heading', 'Local Environmental Warnings:', 'Cảnh báo môi trường tại điểm chọn:');
+
+      // Selected Location & Collapsible Details
+      setElText('label-selected-loc', 'Selected Location:', 'Vị trí đang chọn:');
+      updateDetailsToggleText();
+      setElText('lbl-dtl-lat-graph', 'Planetographic Lat:', 'Vĩ độ Planetographic:');
+      setElText('lbl-dtl-lon-west', 'West Longitude (-180..+180°):', 'Kinh độ Tây (-180..+180°):');
+      setElText('lbl-dtl-cartesian', '3D Coordinates (X, Y, Z):', 'Tọa độ 3D (X, Y, Z):');
+      setElText('lbl-dtl-elevation', 'MOLA Elevation (h):', 'Độ cao MOLA (h):');
+      setElText('lbl-dtl-radius', 'Planetary Radius (R):', 'Bán kính hành tinh (R):');
+      setElText('lbl-dtl-slope', 'Terrain Slope (θ):', 'Độ dốc địa hình (θ):');
+      setElText('lbl-dtl-dg', 'Gravity Anomaly (Δg):', 'Dị thường trọng lực (Δg):');
+      setElText('lbl-dtl-surfg', 'Surface Gravity (g):', 'Gia tốc bề mặt (g):');
+      setElText('lbl-dtl-geoid', 'Geoid / Areoid (N):', 'Mặt Geoid / Areoid (N):');
+      setElText('lbl-dtl-delta', 'Model Diff (120G - 120F):', 'Vi sai mô hình (120G - 120F):');
+      setElText('lbl-dtl-mcs-id', 'Nearest MCS Track:', 'Vết đo MCS gần nhất:');
+      setElText('label-mcs-chart', 'Vertical Temperature Profile T(z) vs Altitude (km):', 'Biểu đồ nhiệt độ thẳng đứng T(z) theo độ cao (km):');
+      setElText('label-cross-section', 'Local Terrain Cross-Section (250 km):', 'Mặt cắt địa hình cục bộ (250 km):');
+
+      // Fullscreen lock overlay
+      lockOverlay.setAttribute('aria-label', tr('Fullscreen interrupted', 'Toàn màn hình bị gián đoạn'));
+      resumeFullscreenButton.textContent = tr('Return to Fullscreen', 'Quay lại Fullscreen');
+      updateFullscreenButton();
+
+      // Re-run reactive telemetry update for selected location without resetting globe state
+      updateState();
+    }
+
+    document.querySelectorAll('[data-lang-btn]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const targetLang = btn.getAttribute('data-lang-btn');
+        if (window.setEvaLang) {
+          window.setEvaLang(targetLang);
+        }
+      });
+    });
+
+    if (window.onEvaLangChange) {
+      window.onEvaLangChange(() => {
+        apply3DPageLocalization();
+      });
+    }
+    apply3DPageLocalization();
+
+    let evaClearColor = [31 / 255, 30 / 255, 36 / 255];
+    function syncWebGLClearColor() {
+      const rgbStr = getComputedStyle(document.documentElement).getPropertyValue('--bg-canvas-rgb').trim();
+      const parts = rgbStr.split(',').map(v => Number(v.trim()));
+      if (parts.length === 3 && parts.every(n => Number.isFinite(n))) {
+        evaClearColor = [parts[0] / 255, parts[1] / 255, parts[2] / 255];
+      }
+    }
+    syncWebGLClearColor();
+    if (window.onEvaThemeChange) {
+      window.onEvaThemeChange(() => {
+        syncWebGLClearColor();
+      });
+    }
+
+    function render() {
+      resizeCanvas();
+
+      gl.clearColor(evaClearColor[0], evaClearColor[1], evaClearColor[2], 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.enable(gl.DEPTH_TEST);
+      gl.enable(gl.CULL_FACE);
+      gl.cullFace(gl.BACK);
+
+      if (appState.autoRotate) {
+        targetRotation.yaw += appState.autoRotateSpeed;
+      }
+      currentRotation.pitch += (targetRotation.pitch - currentRotation.pitch) * 0.08;
+      currentRotation.yaw += (targetRotation.yaw - currentRotation.yaw) * 0.08;
+      cameraDistance += (targetCameraDistance - cameraDistance) * 0.08;
+
+      const aspect = canvas.width / canvas.height;
+      mat4Perspective(projMatrix, (45 * Math.PI) / 180, aspect, 0.1, 100.0);
+
+      const cp = Math.cos(currentRotation.pitch), sp = Math.sin(currentRotation.pitch);
+      const cy = Math.cos(currentRotation.yaw), sy = Math.sin(currentRotation.yaw);
+
+      mvMatrix[0] = cy;
+      mvMatrix[1] = sp * sy;
+      mvMatrix[2] = -cp * sy;
+      mvMatrix[3] = 0;
+
+      mvMatrix[4] = 0;
+      mvMatrix[5] = cp;
+      mvMatrix[6] = sp;
+      mvMatrix[7] = 0;
+
+      mvMatrix[8] = sy;
+      mvMatrix[9] = -sp * cy;
+      mvMatrix[10] = cp * cy;
+      mvMatrix[11] = 0;
+
+      mvMatrix[12] = 0;
+      mvMatrix[13] = 0;
+      mvMatrix[14] = -cameraDistance;
+      mvMatrix[15] = 1;
+
+      mat3FromMat4(normMatrix, mvMatrix);
+
+      gl.useProgram(program);
+      gl.uniformMatrix4fv(uProjMatLoc, false, projMatrix);
+      gl.uniformMatrix4fv(uMvMatLoc, false, mvMatrix);
+      gl.uniformMatrix3fv(uNormMatLoc, false, normMatrix);
+
+      // Pass real terrain exaggeration
+      gl.uniform1f(uExaggerationLoc, appState.exaggeration);
+      gl.uniform1f(uOpacityLoc, appState.layerOpacity);
+      gl.uniform1i(uShowGridLoc, appState.showGrid ? 1 : 0);
+
+      // Sunlight
+      const sunDir = [0.55, 0.45, 0.70];
+      const sunLen = Math.hypot(sunDir[0], sunDir[1], sunDir[2]);
+      gl.uniform3f(uSunDirLoc, sunDir[0]/sunLen, sunDir[1]/sunLen, sunDir[2]/sunLen);
+
+      if (activeTexture) {
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, activeTexture);
+        gl.uniform1i(uActiveTexLoc, 0);
+      }
+
+      if (texPackedData) {
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, texPackedData);
+        gl.uniform1i(uPackedDataTexLoc, 1);
+      }
+
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+      gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+
+      if (appState.showLandmarks) updatePins(document.getElementById('pins-landmarks-container'), landmarks);
+      updateReticle();
+
+      requestAnimationFrame(render);
+    }
+
+    render();
+  })();
+  </script>
+</body>
+</html>
