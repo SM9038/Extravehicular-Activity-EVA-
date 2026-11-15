@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/25_VLH_DKD1/xàm",
-      "program": "c:/25_VLH_DKD1/xàm/build/Debug/outDebug",
+      "cwd": "c:/25_VLH_DKD1/xàm/preprocessing",
+      "program": "c:/25_VLH_DKD1/xàm/preprocessing/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

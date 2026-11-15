@@ -1,0 +1,28 @@
+{
+  "dataset": "NASA MGS MOLA Precision Digital Elevation Model (DEM) Grayscale Mosaic",
+  "source_dataset": "Mars_MGS_MOLA_DEM_mosaic_global_463m (NASA / USGS Astrogeology)",
+  "elevation_encoding": "IEEE Float32 elevation in meters relative to Mars MOLA Datum",
+  "grayscale_mapping": "G = round(255 * (h - H_MIN) / (H_MAX - H_MIN))",
+  "grayscale_convention": {
+    "black": "Minimum elevation (-8,201 m, Hellas Planitia floor)",
+    "dark_gray": "Lowlands (-4,000 m to 0 m)",
+    "medium_gray": "Martian Datum and intermediate plateaus (0 m to +8,000 m)",
+    "light_gray": "Volcanic highlands (+8,000 m to +16,000 m)",
+    "white": "Highest volcanic peaks (21,241 m, Olympus Mons summit caldera)"
+  },
+  "bounds": {
+    "elevation_min_m": -8201.0,
+    "elevation_max_m": 21241.0,
+    "elevation_mean_m": -720.53,
+    "slope_min_deg": 0.0,
+    "slope_max_deg": 14.78,
+    "slope_mean_deg": 0.46
+  },
+  "grid_dimensions": {
+    "width": 720,
+    "height": 360,
+    "pixel_size_deg": 0.5
+  },
+  "tile_coverage": "72 tiles (6 rows x 12 cols, 30\u00b0 x 30\u00b0 each)",
+  "timestamp": "2026-11-04T10:06:52Z"
+}
