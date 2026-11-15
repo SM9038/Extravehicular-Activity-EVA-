@@ -1,0 +1,49 @@
+{
+  "width": 720,
+  "height": 360,
+  "elevation": {
+    "min": -8201.0,
+    "max": 21241.0,
+    "mean": -720.53,
+    "unit": "m",
+    "source": "NASA MGS MOLA Precision DEM Dataset (463m Global Grayscale Reference)"
+  },
+  "radius": {
+    "min": 3373512.75,
+    "max": 3417206.0,
+    "unit": "m"
+  },
+  "slope": {
+    "min": 0.0,
+    "max": 14.78,
+    "mean": 0.46,
+    "unit": "deg",
+    "source": "Spherical Central Difference Gradient from MOLA DEM"
+  },
+  "gravity_120g": {
+    "min": -870.12,
+    "max": 3470.15,
+    "unit": "mGal"
+  },
+  "surface_g": {
+    "min": 3.7049,
+    "max": 3.7483,
+    "unit": "m/s^2"
+  },
+  "geoid_n": {
+    "min": -6661.69,
+    "max": 4922.95,
+    "unit": "m"
+  },
+  "gravity_delta": {
+    "min": -208.26,
+    "max": 125.71,
+    "unit": "mGal"
+  },
+  "main": {
+    "min": 0,
+    "max": 255,
+    "unit": "RGB",
+    "source": "NASA Viking MDIM 2.1 Global Color Mosaic (232m/px, 6x12 Standard 30\u00b0 Quadrangles)"
+  }
+}
