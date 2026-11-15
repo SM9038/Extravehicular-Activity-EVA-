@@ -402,7 +402,7 @@ For each segment gradient angle $\theta_k = \arctan\!\left((z_v - z_u) / \Delta 
   $$v_{\text{eff}}(\theta_k, \tau_k) = \frac{v_0}{\sqrt{K(\theta_k)} \cdot (1 + 0.10\,\tau_k)} \quad [\text{m/s}]$$
 
 #### 2. Mars-Scaled Minetti Metabolic Cost (`terrain_cost_evaluator.js` & `eva_analytics.js`)
-With gradient $i = \operatorname{clamp}(\Delta z / \Delta s, -0.6, +0.6)$, default total suited mass $M_{\text{tot}} = 145.0\text{ kg}$ (`80 kg` body + `15 kg` equipment + `50 kg` xEMU; fallback `135.0 kg` when mass arguments are omitted), $g_{\text{Mars}} = 3.721\text{ m/s}^2$, and $g_{\text{Earth}} = 9.80665\text{ m/s}^2$:
+With gradient $i = \mathrm{clamp}(\Delta z / \Delta s, -0.6, +0.6)$, default total suited mass $M_{\text{tot}} = 145.0\text{ kg}$ (`80 kg` body + `15 kg` equipment + `50 kg` xEMU; fallback `135.0 kg` when mass arguments are omitted), $g_{\text{Mars}} = 3.721\text{ m/s}^2$, and $g_{\text{Earth}} = 9.80665\text{ m/s}^2$:
 
 $$C_W(i) = 280.5\,i^5 - 58.7\,i^4 - 218.4\,i^3 + 43.3\,i^2 + 9.6\,i + 1.88 \quad [\text{J/(kg}\cdot\text{m)}]$$
 
@@ -425,7 +425,7 @@ A route checks both non-negative remaining oxygen (`>= 0 L`) and flags a caution
 
 #### 5. Dynamic Storm Exclusion & Radiation Proxy ([`dust_storm_simulator.js`](geospatial/dust_storm_simulator.js), `survivability.js`)
 - **Gaussian Optical Depth & Wind Decay:** $\tau(d, t) = \tau_{\text{base}} + \Delta\tau_{\max} I(t)\exp(-(d/R)^2)$ (`tau >= 2.0` prohibited; `1.5–2.0` Caution) and $v(d, t) = v_{\text{base}} + \Delta v_{\max} I(t)\max(0, 1 - d/R)$ (`> 100 km/h` prohibited; `40–100 km/h` Caution), enforced with a **`48 h` temporal separation window** on geodesic distance ($R_{\text{Mars}} = 3{,}396.19\text{ km}$).
-- **Radiation Column Proxy:** $\dot{D}_{\text{rad}}(h) = 0.50 + 0.35\,[1 - \operatorname{clamp}((P(h) - 100.0)/1150.0, 0, 1)]\ \text{mSv/day}$ (used in Astronaut Monitoring & Analytics; not an active pathfinding blocker).
+- **Radiation Column Proxy:** $\dot{D}_{\text{rad}}(h) = 0.50 + 0.35\,[1 - \mathrm{clamp}((P(h) - 100.0)/1150.0, 0, 1)]\ \text{mSv/day}$ (used in Astronaut Monitoring & Analytics; not an active pathfinding blocker).
 
 ---
 
