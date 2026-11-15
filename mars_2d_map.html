@@ -5268,7 +5268,7 @@
 
         // Check if dropped onto the 2D map canvas
         if (canvas) {
-          const rect = canvas.getBoundingClientRect();
+          const rect = (canvas.parentElement || canvas).getBoundingClientRect();
           if (
             clientX >= rect.left &&
             clientX <= rect.right &&

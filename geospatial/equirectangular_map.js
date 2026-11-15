@@ -198,6 +198,7 @@ export class Mars2DEquirectangularMap {
     this.zoom = 1.0;
     this.panX = 0;
     this.panY = 0;
+    this.rotation = 0;
     this.targetZoom = 1.0;
     this.targetPanX = 0;
     this.targetPanY = 0;
@@ -313,7 +314,7 @@ export class Mars2DEquirectangularMap {
    */
   _setupCanvas() {
     const dpr = window.devicePixelRatio || 1;
-    const rect = this.canvasA.getBoundingClientRect();
+    const rect = (this.canvasA.parentElement || this.canvasA).getBoundingClientRect();
     this.viewportWidth = rect.width || window.innerWidth;
     this.viewportHeight = rect.height || window.innerHeight;
 
@@ -332,8 +333,11 @@ export class Mars2DEquirectangularMap {
         item.c.width = wPx;
         item.c.height = hPx;
         item.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        item.c.style.transformOrigin = 'center center';
+        item.c.style.transform = `rotate(${this.rotation}rad)`;
       }
     }
+    this.canvasA.style.touchAction = 'none';
 
     const margin = 40;
     const availW = Math.max(100, this.viewportWidth - margin * 2);
@@ -362,10 +366,12 @@ export class Mars2DEquirectangularMap {
    * Resets map view to center Mars on screen.
    */
   resetView() {
+    this.rotation = 0;
     this._setupCanvas();
     this.zoom = 1.0;
     this.panX = (this.viewportWidth - this.baseMapWidth * this.zoom) / 2.0;
     this.panY = (this.viewportHeight - this.baseMapHeight * this.zoom) / 2.0;
+    this._applyRotation();
     this.requestRender();
 
     if (this.options.onViewChange) {
@@ -788,6 +794,9 @@ export class Mars2DEquirectangularMap {
   zoomAtPoint(deltaZoomFactor, screenX = null, screenY = null) {
     if (screenX === null || isNaN(screenX)) screenX = this.viewportWidth / 2.0;
     if (screenY === null || isNaN(screenY)) screenY = this.viewportHeight / 2.0;
+    const mapPoint = this._screenToMapPoint(screenX, screenY);
+    screenX = mapPoint.x;
+    screenY = mapPoint.y;
 
     const prevZoom = this.zoom;
     const nextZoom = Math.max(this.options.minZoom, Math.min(this.options.maxZoom, this.zoom * deltaZoomFactor));
@@ -865,6 +874,10 @@ export class Mars2DEquirectangularMap {
    * Converts screen (X, Y) to normalized UV and (lon, lat).
    */
   screenToGeo(screenX, screenY) {
+    const mapPoint = this._screenToMapPoint(screenX, screenY);
+    screenX = mapPoint.x;
+    screenY = mapPoint.y;
+
     const mapW = this.baseMapWidth * this.zoom;
     const mapH = this.baseMapHeight * this.zoom;
 
@@ -875,6 +888,30 @@ export class Mars2DEquirectangularMap {
     const lat = 90.0 - v * 180.0;
 
     return { u, v, lon, lat, isInsidePlanetaryMap: u >= 0 && u <= 1 && v >= 0 && v <= 1 };
+  }
+
+  _screenToMapPoint(screenX, screenY) {
+    const dx = screenX - this.viewportWidth / 2.0;
+    const dy = screenY - this.viewportHeight / 2.0;
+    const cos = Math.cos(this.rotation);
+    const sin = Math.sin(this.rotation);
+    return {
+      x: this.viewportWidth / 2.0 + dx * cos + dy * sin,
+      y: this.viewportHeight / 2.0 - dx * sin + dy * cos
+    };
+  }
+
+  _rotateScreenDeltaToMap(dx, dy) {
+    const cos = Math.cos(this.rotation);
+    const sin = Math.sin(this.rotation);
+    return { x: dx * cos + dy * sin, y: -dx * sin + dy * cos };
+  }
+
+  _applyRotation() {
+    const transform = `rotate(${this.rotation}rad)`;
+    for (const canvas of [this.canvasA, this.canvasB, this.canvasC, this.canvasD]) {
+      if (canvas) canvas.style.transform = transform;
+    }
   }
 
   /**
@@ -2101,15 +2138,16 @@ export class Mars2DEquirectangularMap {
     // Mouse Down
     el.addEventListener('mousedown', (e) => {
       if (e.button === 0) {
-        const rect = el.getBoundingClientRect();
+        const rect = (el.parentElement || el).getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
+        const mapPoint = this._screenToMapPoint(mouseX, mouseY);
 
         if (this.options.showMinimap &&
-            mouseX >= this.minimapX && mouseX <= this.minimapX + this.minimapWidth &&
-            mouseY >= this.minimapY && mouseY <= this.minimapY + this.minimapHeight) {
+            mapPoint.x >= this.minimapX && mapPoint.x <= this.minimapX + this.minimapWidth &&
+            mapPoint.y >= this.minimapY && mapPoint.y <= this.minimapY + this.minimapHeight) {
           this.isDraggingMinimap = true;
-          this._handleMinimapClick(mouseX, mouseY);
+          this._handleMinimapClick(mapPoint.x, mapPoint.y);
           return;
         }
 
@@ -2125,12 +2163,13 @@ export class Mars2DEquirectangularMap {
 
     // Mouse Move (High-frequency pointer events decoupled from DOM updates)
     window.addEventListener('mousemove', (e) => {
-      const rect = el.getBoundingClientRect();
+      const rect = (el.parentElement || el).getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
 
       if (this.isDraggingMinimap) {
-        this._handleMinimapClick(mouseX, mouseY);
+        const mapPoint = this._screenToMapPoint(mouseX, mouseY);
+        this._handleMinimapClick(mapPoint.x, mapPoint.y);
         return;
       }
 
@@ -2140,10 +2179,12 @@ export class Mars2DEquirectangularMap {
         if (Math.hypot(dx, dy) > 4) {
           this.hasMovedDuringDrag = true;
         }
-        this.panX = this.lastPanX + dx;
-        this.panY = this.lastPanY + dy;
+        const mapDelta = this._rotateScreenDeltaToMap(dx, dy);
+        this.panX = this.lastPanX + mapDelta.x;
+        this.panY = this.lastPanY + mapDelta.y;
         this.requestRender();
       }
+      const mapPoint = this._screenToMapPoint(mouseX, mouseY);
 
       // Throttled Hover Sampling to prevent DOM layout thrashing
       const now = performance.now();
@@ -2218,7 +2259,7 @@ export class Mars2DEquirectangularMap {
             for (let i = 0; i < this.routePath.length; i++) {
               const rPt = this.routePath[i];
               const rScr = this.geoToScreen(rPt.lon, rPt.lat);
-              const dPx = Math.hypot(mouseX - rScr.x, mouseY - rScr.y);
+              const dPx = Math.hypot(mapPoint.x - rScr.x, mapPoint.y - rScr.y);
               if (dPx < minDistPx) {
                 minDistPx = dPx;
                 nearestPt = rPt;
@@ -2250,7 +2291,7 @@ export class Mars2DEquirectangularMap {
         el.style.cursor = 'grab';
 
         if (!this.hasMovedDuringDrag) {
-          const rect = el.getBoundingClientRect();
+          const rect = (el.parentElement || el).getBoundingClientRect();
           const clickX = e.clientX - rect.left;
           const clickY = e.clientY - rect.top;
           if (clickX >= 0 && clickX <= this.viewportWidth && clickY >= 0 && clickY <= this.viewportHeight) {
@@ -2281,7 +2322,7 @@ export class Mars2DEquirectangularMap {
 
     // Double Click: Zoom in at clicked position
     el.addEventListener('dblclick', (e) => {
-      const rect = el.getBoundingClientRect();
+      const rect = (el.parentElement || el).getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
       this.zoomAtPoint(2.0, mouseX, mouseY);
@@ -2290,7 +2331,7 @@ export class Mars2DEquirectangularMap {
     // Mouse Wheel: Immediate cursor-centered zoom
     el.addEventListener('wheel', (e) => {
       e.preventDefault();
-      const rect = el.getBoundingClientRect();
+      const rect = (el.parentElement || el).getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
 
@@ -2298,8 +2339,9 @@ export class Mars2DEquirectangularMap {
       this.zoomAtPoint(zoomFactor, mouseX, mouseY);
     }, { passive: false });
 
-    // Touch Events: Smooth Drag & Multi-touch Pinch to Zoom
+    // Touch Events: one-finger pan and two-finger pinch-to-zoom/twist-to-rotate
     let initialPinchDist = null;
+    let lastPinchAngle = null;
     let lastTouchX = 0;
     let lastTouchY = 0;
 
@@ -2314,6 +2356,7 @@ export class Mars2DEquirectangularMap {
         const dx = e.touches[0].clientX - e.touches[1].clientX;
         const dy = e.touches[0].clientY - e.touches[1].clientY;
         initialPinchDist = Math.hypot(dx, dy);
+        lastPinchAngle = Math.atan2(dy, dx);
       }
     }, { passive: false });
 
@@ -2321,20 +2364,35 @@ export class Mars2DEquirectangularMap {
       e.preventDefault();
       if (e.touches.length === 1 && this.isDragging) {
         this.hasMovedDuringDrag = true;
-        const deltaX = e.touches[0].clientX - lastTouchX;
-        const deltaY = e.touches[0].clientY - lastTouchY;
+        const delta = this._rotateScreenDeltaToMap(
+          e.touches[0].clientX - lastTouchX,
+          e.touches[0].clientY - lastTouchY
+        );
         lastTouchX = e.touches[0].clientX;
         lastTouchY = e.touches[0].clientY;
-        this.panX += deltaX;
-        this.panY += deltaY;
+        this.panX += delta.x;
+        this.panY += delta.y;
         this.requestRender();
-      } else if (e.touches.length === 2 && initialPinchDist) {
+      } else if (e.touches.length === 2 && initialPinchDist !== null) {
         const dx = e.touches[0].clientX - e.touches[1].clientX;
         const dy = e.touches[0].clientY - e.touches[1].clientY;
         const currentDist = Math.hypot(dx, dy);
         if (currentDist > 5 && initialPinchDist > 5) {
+          if (lastPinchAngle !== null) {
+            const angle = Math.atan2(dy, dx);
+            let angleDelta = angle - lastPinchAngle;
+            if (angleDelta > Math.PI) angleDelta -= Math.PI * 2;
+            if (angleDelta < -Math.PI) angleDelta += Math.PI * 2;
+            this.rotation = Math.atan2(
+              Math.sin(this.rotation + angleDelta),
+              Math.cos(this.rotation + angleDelta)
+            );
+            this._applyRotation();
+            lastPinchAngle = angle;
+          }
+
           const factor = currentDist / initialPinchDist;
-          const rect = el.getBoundingClientRect();
+          const rect = (el.parentElement || el).getBoundingClientRect();
           const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
           const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
           this.zoomAtPoint(factor, centerX, centerY);
@@ -2347,10 +2405,12 @@ export class Mars2DEquirectangularMap {
       if (e.touches.length === 0) {
         this.isDragging = false;
         initialPinchDist = null;
+        lastPinchAngle = null;
       } else if (e.touches.length === 1) {
         lastTouchX = e.touches[0].clientX;
         lastTouchY = e.touches[0].clientY;
         initialPinchDist = null;
+        lastPinchAngle = null;
       }
     });
 
