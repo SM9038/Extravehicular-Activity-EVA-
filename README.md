@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>Autonomous Martian Surface Navigation, Extravehicular Activity (EVA) Route Planning & Astronaut Survivability Telemetry</strong>
+  <strong>Autonomous Martian Surface Navigation, Extravehicular Activity (EVA) Route Planning &amp; Astronaut Survivability Telemetry</strong>
 </p>
 
 <p align="center">
@@ -15,891 +15,537 @@
 <p align="center">
   <img src="https://img.shields.io/badge/NASA%20Space%20Apps-2026%20Project-0B3D91?style=flat-square&logo=nasa" alt="NASA Space Apps Challenge 2026">
   <img src="https://img.shields.io/badge/Status-Functional%20Prototype-success?style=flat-square" alt="Status">
-  <img src="https://img.shields.io/badge/Engine-Vanilla%20JS%20%7C%20CesiumJS%20%7C%20Leaflet-F7DF1E?style=flat-square&logo=javascript" alt="Tech Stack">
-  <img src="https://img.shields.io/badge/Data-NASA%20PDS%20MOLA%20%7C%20USGS%20MDIM-red?style=flat-square" alt="Data Sources">
-  <img src="https://img.shields.io/badge/Architecture-Web%20Workers%20Concurrency-blueviolet?style=flat-square" alt="Concurrency">
-  <img src="https://img.shields.io/badge/License-MIT%20(Pending%20Owner%20Selection)-lightgrey?style=flat-square" alt="License">
+  <img src="https://img.shields.io/badge/Engine-Vanilla%20JS%20%7C%20WebGL%20%7C%20Web%20Workers-F7DF1E?style=flat-square&logo=javascript" alt="Tech Stack">
+  <img src="https://img.shields.io/badge/Data-NASA%20PDS%20MOLA%20%7C%20USGS%20MDIM%20%7C%20MRO-red?style=flat-square" alt="Data Sources">
+  <img src="https://img.shields.io/badge/Concurrency-route__worker.js%20Web%20Worker-blueviolet?style=flat-square" alt="Concurrency">
+  <img src="https://img.shields.io/badge/License-No%20LICENSE%20File%20Committed-lightgrey?style=flat-square" alt="License Status">
 </p>
 
----
+> [!TIP]
+> **Official Live Web Demo & Repository**
+> - **Launch Live Web App:** [https://sm9038.github.io/Extravehicular-Activity-EVA-/](https://sm9038.github.io/Extravehicular-Activity-EVA-/)
+> - **Official GitHub Repository:** [https://github.com/SM9038/Extravehicular-Activity-EVA-](https://github.com/SM9038/Extravehicular-Activity-EVA-)
 
-## 🌌 Overview & The Martian Challenge
-
-When future astronauts step onto the surface of Mars, they will confront an environment vastly more unforgiving than the Moon: extreme topography with vertical canyon walls, razor-sharp crater rims, unpredictable regional dust storms, and a thin carbon-dioxide atmosphere offering minimal surface pressure. 
-
-Every extravehicular activity (EVA) is bound by a strict life-support clock. An astronaut's **NASA Exploration Extravehicular Mobility Unit (xEMU)** suit carries a finite supply of electrical energy (battery), breathable oxygen ($O_2$), and water for thermal heat rejection. A miscalculated route up a $20^\circ$ incline can exhaust suit reserves miles before the astronaut reaches safety.
-
-**EVA MARSWALK** was created by the **AI-Powered Team** — undergraduate students at the **Ho Chi Minh University of Science (VNU-HCM), Vietnam** — as an innovation project for the **NASA Space Apps Challenge 2026**.
-
-The mission of EVA MARSWALK is simple yet critical: provide an intelligent, terrain-aware, multi-criteria surface navigation system that guides astronauts safely across real Martian topography. While conventional GPS-style planners merely search for the shortest distance, EVA MARSWALK optimizes across **topographic slope hazards**, **physiological metabolic work**, and **dynamic environmental threats**.
-
-Most importantly, we put your safe return home after an EVA above all else — because exploring Mars is magnificent, but making it back to the habitat to tell the story is what truly matters.
+> [!IMPORTANT]
+> **Simulation & Research Disclaimer:** **EVA MARSWALK** (`EVA MARS EXPLORER`) is a research, educational, and mission-planning simulation prototype created for the **NASA Space Apps Challenge 2026**. It is **not** flight-certified NASA operational navigation software and must **not** be used for real astronaut life-support decisions or field traversal.
 
 ---
 
 ## 📋 Table of Contents
+
+- [🌌 Overview & The Martian EVA Challenge](#-overview--the-martian-eva-challenge)
+- [🏛️ Strategic Architecture & NASA Open-Science Integration](#-strategic-architecture--nasa-open-science-integration)
 - [✨ Key Features](#-key-features)
-- [How Does EVA MARSWALK Work?](#how-does-eva-marswalk-work)
-- [🧭 The Best Part: Marswalk Planner](#-the-best-part-marswalk-planner)
-- [🧠 Pathfinding Algorithms Suite](#-pathfinding-algorithms-suite)
+- [📖 How Does EVA MARSWALK Work?](#-how-does-eva-marswalk-work)
 - [📸 Application Showcase & Screenshots](#-application-showcase--screenshots)
 - [🚀 Quick Start & Installation](#-quick-start--installation)
-- [🎮 Interactive Traversal Workflow](#-interactive-traversal-workflow)
 - [🔬 Scientific Data & Methodology](#-scientific-data--methodology)
-- [🛠️ Tech Stack & System Architecture](#-tech-stack--system-architecture)
+- [🛠️ Tech Stack & Verified System Architecture](#-tech-stack--verified-system-architecture)
 - [⚠️ Scientific Limitations & Disclaimers](#-scientific-limitations--disclaimers)
-- [🔭 Future Developments](#-future-developments)
+- [🚀 Future Developments](#-future-developments)
 - [👥 Team & Acknowledgments](#-team--acknowledgments)
 - [📄 License & Open-Source Policy](#-license--open-source-policy)
 
 ---
 
+## 🌌 Overview & The Martian EVA Challenge
+
+### The Problem
+Extravehicular activity (EVA) on Mars is constrained by unforgiving terrain and strict physiological limits. Deep fault scarps, volcanic shields rising over 21 km above the datum, impact crater rims, regional dust storms, and a thin carbon-dioxide atmosphere averaging ~610 Pa at the zero-elevation datum leave narrow operational safety margins. An astronaut traversing across high-grade regolith faces asymmetric downhill tipping hazards, sharp increases in metabolic oxygen consumption, and elevated solar/galactic cosmic radiation exposure.
+
+### Why Terrain-Aware EVA Planning Matters
+Shortest-path Euclidean routing fails in planetary exploration. A path that minimizes straight-line horizontal distance can force an astronaut up unstable slopes, through dusty depressions, or across uncompensated canyon drops that breach safety thresholds or exhaust oxygen supplies before safe return. Mission planners need continuous-angle terrain reasoning paired with transparent scientific data provenance so modeled estimates are never mistaken for raw spacecraft telemetry.
+
+### The Solution: EVA MARSWALK
+**EVA MARSWALK** was built by **Team AI-Powered**—undergraduate students at the **Ho Chi Minh University of Science (VNU-HCM), Vietnam**—for the **NASA Space Apps Challenge 2026**. Running directly in the browser with zero external framework dependencies, it fuses bundled **NASA PDS** and **USGS Astrogeology** datasets (`MGS MOLA GTM090AA`, `Viking MDIM 2.1`, `MRO120G / 120F`, and `MRO MCS 2025073120_DDR`) with a background Web Worker pathfinding suite (**Field D\***, **D\* Lite**, **Fast Marching Method (FMM)**, and **Baseline A\***), dynamic Gaussian dust storm exclusion (`tau >= 2.0`, `wind > 100 km/h`, `48 h` buffer), Mars-scaled Minetti metabolic modeling, and multi-scale 2D/3D WebGL inspection.
+
+---
+
+## 🏛️ Strategic Architecture & NASA Open-Science Integration
+
+### Four Core Strategic Capabilities
+
+1. **Verifiable Planetary Data Fusion & Explicit Provenance:** Every value displayed in the HUD or analytics modal explicitly distinguishes between **Measured Orbital Datasets**, **Derived Physical Values**, **Modeled Estimates**, and **Visual Representations**.
+2. **Bidirectional Slope-Coupled Locomotion & Metabolic Planning:** Evaluates signed directional traversal slopes separately (`+22.0°` default uphill / `-16.5°` downhill for Astronaut EVA, plus configurable **Robotic Rover** `15.0°` and **Agile Scout** `28.0°` presets) alongside a Mars-scaled 5th-order Minetti metabolic energy model and physiological O₂ demand.
+3. **Spatiotemporal Dust Storm Hazard Exclusion & Detour Replanning:** Models moving storm fronts across optical depth ($\tau$), surface wind speed, and a `48 h` spatiotemporal arrival buffer, isolating storm rejection cleanly from topographic failure (`STORM_EXCLUSION` vs. `TOO_STEEP`).
+4. **Multi-Paradigm Non-Blocking Worker Benchmarking:** Offloads search execution across **4 distinct algorithmic engines** onto `geospatial/route_worker.js`, benchmarking CPU latency, node expansions, distance, smoothness, and O₂ consumption side-by-side over identical terrain rasters.
+
+### Data-to-Decision Architecture
+
+```mermaid
+flowchart LR
+    PDS["NASA PDS & USGS Archives (MOLA, Viking, MRO120G, MCS)"] --> Grids["Bundled Local Grids & 72-Tile Pyramids (data/)"]
+    Grids --> Eval["Terrain Cost & Survivability Engine (survivability.js / terrain_cost_evaluator.js)"]
+    Storms["Dynamic Storm Fields (dust_storm_simulator.js)"] --> Eval
+    Suit["Astronaut & Suit Config (Speed, Mass, O2, Slope Limits)"] --> Eval
+    Eval --> Worker["Background Pathfinding Worker (geospatial/route_worker.js)"]
+    Worker --> UI["2D Canvas Map, 3D WebGL Globe & Biophysical Analytics"]
+```
+
+### Multi-Scale Spatial Architecture
+
+```mermaid
+flowchart TD
+    Portal["Mission Portal (index.html)"] --> Explorer2D["2D Explorer (mars_2d_map.html)"]
+    Portal --> Globe3D["3D Mars Globe (mars_3d_map.html)"]
+    Explorer2D --> Tiler["Multi-Layer Canvas 2D Tiler (72 Tiles, 4-Tier LOD, 8 Layers)"]
+    Explorer2D --> TerrainPatch["Local 3D Terrain View (terrain_view_3d.js: 40°x40°, 97x97 Mesh)"]
+    Globe3D --> WebGLSphere["Custom WebGL Planetary Sphere (7 Textures, 13 Landmarks, 1,153 MCS Tracks)"]
+```
+
+### Integrated EVA Routing & Validation Workflow
+
+```mermaid
+flowchart TD
+    Req["Calculate Route Request (Start, Dest, Profile, Objective)"] --> WorkerMsg["postMessage to route_worker.js"]
+    WorkerMsg --> Search["Active Solver: Field D* / FMM / D* Lite / A*"]
+    Search --> Transition["evaluateTerrainTransition(): Signed Slope + MOLA + Dust + NoData Check"]
+    Transition --> Smooth["simplifyRouteTerrainAware() + Corridor Clearance Scan (0.40C, 0.75C, 1.00C)"]
+    Smooth --> Metrics["Minetti-Mars Metabolic Energy + O2 Budget + Survival Validation"]
+    Metrics --> Render["Draw Color-Coded Route + Elevation Profile + Analytics Charts"]
+```
+
+### Strict Severity Bottleneck & Survival Index (`survivability.js`)
+
+For both site monitoring and route validation, `evaluateAstronautSurvival()` evaluates environmental parameters against proximity coefficient curves $p$ and assigns `SAFE`, `CAUTION`, `UNSAFE`, or `UNKNOWN`:
+
+- **Strict Categorical Dominance:** `UNSAFE > CAUTION > UNKNOWN > SAFE`. If even **one** criterion fails an `UNSAFE` bound, the entire location or corridor is flagged **`UNSAFE`** (`S_overall = 0.5 * S_total`), preventing safe averages on benign metrics from hiding a lethal threat. Two or more `CAUTION` flags also halve `S_overall`, whereas a single `CAUTION` applies a `0.8` multiplier.
+- **Regional Contrast Inside the Application:**
+  - **Jezero Crater (`18.38°N, 77.58°E`):** Flat crater floor (`~0.6°` slope, `-2,500 m` elevation, `~771–773 Pa` modeled pressure) typically evaluates **`SAFE` (`99/100`)** with an `8.0 h` nominal EVA window.
+  - **Olympus Mons Summit (`18.65°N, 226.2°E`):** Despite gentle summit shield slopes, extreme altitude (`~21.2 km`) drives modeled barometric pressure down to `~84–99 Pa` (far below the `180 Pa` critical limit), triggering an immediate decompression **`UNSAFE` (`38/100`)** warning.
+
+### Data Provenance Taxonomy
+
+| Category | Examples in the Application | Role & Interpretation |
+|---|---|---|
+| **Measured Orbital Datasets** | `Viking MDIM 2.1` color mosaic, `MGS MOLA (GTM090AA)` elevation tiles, `MRO120G / 120F` gravity model, `MRO MCS (2025073120_DDR)` tracks | Archived NASA/USGS planetary products stored locally in `data/` |
+| **Derived Physical Values** | Terrain slope ($\theta$), surface gravity ($g$), areoid/geoid undulation ($N$), differential gravity ($\Delta g$), cumulative ascent/descent | Computed deterministically from loaded orbital rasters and spherical harmonic grids |
+| **Modeled Estimates** | `Barometric Model P(h)` outside direct MCS tracks, `MODEL-BASED SAFETY INDEX`, Minetti-Mars metabolic work & O₂ rate, Dust Storm Engine (`MODELED`), GCR column shielding proxy | Engineering simulation estimates for mission trade studies; **not** raw in-situ telemetry |
+| **Visual Representations** | `1x–10x` 3D Globe relief exaggeration, `Exag: 5x` Local 3D Terrain relief scaling, layer colormaps | Visual aids amplifying planetary relief and scalar variations |
+
+### Pathfinding Suite & Scenario-Dependent Benchmarking
+
+All four solvers implemented in [`geospatial/field_d_star.js`](geospatial/field_d_star.js) (`_runFieldDStar`, `_runDStarLite`, `_runFMM`, `_runAStar`) run against the **same** MOLA elevation/slope grids and the shared `evaluateTerrainTransition()` cost evaluator:
+
+| Algorithm | Code Reference | Algorithmic Paradigm | Practical Behavior in Martian Terrain |
+|---|---|---|---|
+| **Field D\*** | `_runFieldDStar` + `replanFieldDStar` | Continuous any-angle linear edge interpolation + incremental repair (`Ferguson & Stentz`) | Eliminates discrete `45°/90°` staircase artifacts via continuous cell-edge crossings and supports incremental repair (`_fieldDStarState`) when hazards change |
+| **Fast Marching Method (FMM)** | `_runFMM` | Forward upwind Eikonal PDE narrow-band wavefront propagation (`Sethian`) | Propagates smooth continuous arrival fronts across orthogonal frozen neighbors and traces gradient descent backward from goal to start |
+| **D\* Lite** | `_runDStarLite` | Backward 8-connected incremental heuristic search (`Koenig & Likhachev`) | Maintains `(g, rhs)` two-component priority keys over an 8-neighbor graph |
+| **Baseline A\*** | `_runAStar` | Discrete 8-connected forward graph search with admissible heuristic | Deterministic baseline used by `runFourAlgorithmBenchmark()` to compute relative `o2SavedVsAStarPct` and distance deltas |
+
+> [!NOTE]
+> **Scenario-Dependent Benchmark Outcomes:** Efficiency gains (such as distance or O₂ saved vs. Baseline A\*) are computed **dynamically per route** inside [`runFourAlgorithmBenchmark()`](geospatial/field_d_star.js#L2871-L2943) (`o2SavedVsAStarPct`). Measured savings vary by route geometry, local slope roughness, optimization objective (`min_risk`, `min_energy`, `min_elevation`, `balanced`), and obstacle density—there is no fixed universal percentage across all Martian terrains.
+
+### Battery Telemetry & Consumables Clarification
+
+Per [`geospatial/eva_analytics.js`](geospatial/eva_analytics.js#L1348-L1358), the **PLSS Battery (`20.5 V × 40 Ah / 820 Wh LIB`)** and **8.0 h Max EVA Limit** are displayed strictly as **`REFERENCE SPEC / NOT MODELED`**. The engine computes **mechanical/metabolic work equivalent (`Wh`)** alongside **dynamic oxygen (`L`) depletion**, and **does not** simulate active electrical battery drain from suit avionics, ventilation fans, heaters, or cooling pumps.
+
+---
+
 ## ✨ Key Features
 
-- **🗺️ Mars 2D Global Explorer:** High-performance equirectangular planetary map powered by Leaflet and custom HTML5 canvas renderers, streaming 72 multi-resolution tiles of authentic NASA/USGS imagery.
-- **🪐 Interactive 3D WebGL Globe:** Full 3D Mars globe powered by CesiumJS, projecting topographic relief, landmark overlays, and spherical harmonic gravity anomalies across a true planetary ellipsoid.
-- **🧭 The Best Part: Marswalk Planner:** Point-to-point EVA navigation allowing explorers to set Start (Base/Habitat) and Goal (Science Site) waypoints with instant, terrain-aware route calculation.
-- **🧠 4-Algorithm Pathfinding Showcase:** Select and benchmark four genuine graph and PDE algorithms: **Field D\*** (Ferguson & Stentz continuous-angle interpolation), **Fast Marching Method (FMM)**, **D\* Lite**, and **A\***.
-- **🧑‍🚀 Astronaut Safety & Telemetry HUD:** Life-support simulation calibrated against official NASA xEMU suit specifications (battery capacity, $O_2$ consumption rates, and SWME thermal cooling limits).
-- **🌪️ Dynamic Dust Storm Simulation & Avoidance:** Spawns moving 2D Gaussian dust storm cells across the map. If a storm threatens the planned route, the background engine dynamically replans a safe detour without freezing the UI.
-- **🏃 Astronaut Movement Simulation:** Step-by-step interactive simulation animating the astronaut walking along the trajectory, with real-time HUD telemetry updates.
-- **⛰️ Local 3D Terrain on the Spot:** Inspect local elevation relief directly under the astronaut's position to evaluate slope hazards before stepping foot on the slope. *(Note: You are modeled as an idealized point mass on this map, so even if you zoom out to maximum, don't expect an articulated spacesuit avatar!)*
-- **📍 Mars Gazetteer & "Fly To" Navigator:** Jump to 42 officially recognized IAU/USGS Martian geological landmarks, including Olympus Mons, Jezero Crater, Gale Crater, and Valles Marineris.
+- **🗺️ Custom Multi-Layer 2D Mars Explorer ([`geospatial/equirectangular_map.js`](geospatial/equirectangular_map.js)):** Four-canvas pipeline rendering a verified **72-tile** `Viking MDIM 2.1` and `MOLA` 4-tier LOD pyramid plus **8 selectable scientific layers** (`main`, `elevation`, `pressure`, `gravity_120g`, `slope`, `surface_g`, `geoid_n`, `gravity_delta`) with an off-thread `createImageBitmap` LRU cache.
+- **🪐 Custom WebGL 3D Mars Globe ([`mars_3d_map.html`](mars_3d_map.html)):** Interactive 3D planetary sphere built directly on native WebGL shaders without external globe or mapping libraries, supporting `1x–10x` radial terrain displacement, 6 switchable global scalar textures plus packed elevation/geoid textures, **13 pinned planetary landmarks**, and **1,153 MRO MCS sounding track overlays**.
+- **⛰️ Interactive Local 3D Terrain Block ([`geospatial/terrain_view_3d.js`](geospatial/terrain_view_3d.js)):** Drag the **3D TERRAIN** Pegman astronaut onto any spot on Mars to inspect a `40° × 40°` (~`2,366 km` wide) `97 × 97` vertex (`18,432` triangles) MOLA heightfield with `Visual`, `MOLA`, and `Slope` shading.
+- **🧭 Marswalk Planner & Background Worker ([`geospatial/route_worker.js`](geospatial/route_worker.js)):** Non-blocking route calculation with corridor safety buffers (`0.40·C`, `0.75·C`, `1.00·C`), directional uphill/downhill limits, customizable biomechanics (`speed`, `bodyMass`, `equipmentMass`, `oxygenCapacity`), and 4 optimization objectives.
+- **🌪️ Dynamic Dust Storm Simulator ([`geospatial/dust_storm_simulator.js`](geospatial/dust_storm_simulator.js)):** Spawns moving 2D Gaussian storm cells (`R = 20–600 km`, `Weak` to `Severe`, compass vector `0°–359°`, velocity `0–100 km/h`) with hard `τ >= 2.0`, `wind > 100 km/h`, and `48 h` arrival separation constraints.
+- **🏃 Animated Astronaut Walk & Analytics HUD ([`geospatial/eva_analytics.js`](geospatial/eva_analytics.js)):** `1×–200×` mission playback paired with 6 synchronized KPI cards, coupled Speed/VO₂ & DEM elevation SVG plots, and raw LaTeX export of active equations.
+- **📍 Gazetteer Search, 7 Themes & Bilingual UI ([`geospatial/eva_settings.js`](geospatial/eva_settings.js)):** Fly directly to coordinates or features across **18** 2D quick presets, **13** 3D globe pins, **19** `MARS_LANDMARKS`, and **27** searchable `IAU/USGS` entries in [`geospatial/mars_gazetteer.js`](geospatial/mars_gazetteer.js), wrapped in **7 synchronized CSS themes** and an **ENG / VIE** language toggle.
 
 ---
 
-# How Does EVA MARSWALK Work?
-*A Complete Step-by-Step User Guide*
+## 📖 How Does EVA MARSWALK Work?
 
-> [!IMPORTANT]
-> **Simulation & Research Disclaimer:** **EVA MARSWALK** (`EVA MARS EXPLORER`) is a research, educational, and mission-planning simulation tool. It is **not** a NASA flight-certified operational navigation system and must **not** be used for real astronaut life-support decisions or unverified field traversal.
+*A Complete Step-by-Step User Tutorial*
 
----
+### 1. Getting Started & Launching the Workspace
 
-## Table of Contents
-
-- [1. Introduction](#1-introduction)
-- [2. Getting Started](#2-getting-started)
-- [3. Exploring Mars with the 2D Explorer](#3-exploring-mars-with-the-2d-explorer)
-- [4. Using Scientific Data Layers and Interpreting Colors](#4-using-scientific-data-layers-and-interpreting-colors)
-- [5. Exploring Mars with the 3D Globe Explorer](#5-exploring-mars-with-the-3d-globe-explorer)
-- [6. Searching Locations, Landmarks, and Coordinates](#6-searching-locations-landmarks-and-coordinates)
-- [7. Monitoring Astronaut Safety and Environmental Conditions](#7-monitoring-astronaut-safety-and-environmental-conditions)
-- [8. Planning a Marswalk Mission](#8-planning-a-marswalk-mission)
-- [9. Selecting and Comparing Pathfinding Algorithms](#9-selecting-and-comparing-pathfinding-algorithms)
-- [10. Running the Simulated Astronaut Walk](#10-running-the-simulated-astronaut-walk)
-- [11. Simulating and Responding to Dust Storms](#11-simulating-and-responding-to-dust-storms)
-- [12. Inspecting the Telemetry & Biophysical Analytics Dashboard](#12-inspecting-the-telemetry--biophysical-analytics-dashboard)
-- [13. Inspecting Local 3D Terrain Around a Point](#13-inspecting-local-3d-terrain-around-a-point)
-- [14. Customizing Themes, Constraints, and System Settings](#14-customizing-themes-constraints-and-system-settings)
-- [15. Understanding Route Statuses, Safety Colors, and Warnings](#15-understanding-route-statuses-safety-colors-and-warnings)
-- [16. Troubleshooting Common Issues](#16-troubleshooting-common-issues)
-- [17. Important Limitations](#17-important-limitations)
-
----
-
-## 1. Introduction
-
-**EVA MARSWALK** is an interactive Martian planetary explorer and simulated surface mission planner that runs locally in your web browser. It brings together planetary orbital imagery, topography, gravity fields, and atmospheric data alongside terrain-aware pathfinding algorithms and a simulated NASA xEMU astronaut suit model.
-
-### What You Can Do
-
-With EVA MARSWALK, you can perform two distinct types of work:
-
-1. **Planetary Exploration (2D Explorer & 3D Globe):**
-   Browse global Martian surface imagery and scientific data layers, fly to famous volcanoes, canyons, and NASA rover landing sites, inspect local elevation and gravity values at any coordinate, and view local 3D relief patches.
-2. **Simulated Astronaut Mission Planning (Marswalk Planner & Dust Storm Engine):**
-   Choose a starting point and destination on Mars, adjust astronaut mobility and life-support parameters (speed, suit/equipment mass, oxygen capacity, slope limits), compare four pathfinding solvers (`Field D*`, `D* Lite`, `Fast Marching (FMM)`, and `Baseline A*`), test dynamic dust storms, run an accelerated walk simulation, and inspect coupled biophysical analytics.
-
-### Understanding Data Provenance Inside the App
-
-Throughout EVA MARSWALK, values fall into four distinct categories:
-
-| Category | Examples in the Application | How to Interpret It |
-|---|---|---|
-| **Measured Orbital Datasets** | **Viking MDIM 2.1 Color** mosaic, **MGS MOLA (`GTM090AA`)** elevation tiles, **MRO (`MRO120G` / `120F`)** gravity anomaly grid, **MRO MCS (`2025073120_DDR`)** sounding tracks | Scientifically archived planetary observations stored locally inside the project. |
-| **Derived Physical Values** | Terrain slope ($\theta$), surface gravitational acceleration ($g$), geoid/areoid undulation ($N$), differential gravity ($\Delta g$), cumulative ascent/descent | Computed mathematically from the loaded orbital grids. |
-| **Modeled Estimates** | `Atmospheric Pressure (Modeled)` via Barometric Model $P(h)$ outside direct MCS tracks, `MODEL-BASED SAFETY INDEX`, Minetti-Mars metabolic energy and $O_2$ consumption, **Dust Storm Engine** (`MODELED`) | Simulation estimates built for mission modeling—useful for scenario comparison, not direct orbital telemetry. |
-| **Visual Representations** | 3D terrain vertical exaggeration (`1x–10x` on the 3D Globe; `Exag: 5x` in Local 3D Terrain View), scientific layer color ramps | Visual aids that amplify subtle planetary relief or map numeric values to colors. |
-
----
-
-## 2. Getting Started
-
-### Launching the Application
-
-**Purpose:** Start the local Python HTTP server so all offline 72-tile map pyramids, elevation rasters, and scientific manifests load cleanly in your browser.
-
-**How to use it:**
-1. Open the project folder (`nasa_mars_explorer`) on Windows.
-2. Double-click **`desktop/launch_desktop.bat`** (opens the **Mission Portal** `index.html`) or **`launch_2d_map.bat`** (opens directly into `mars_2d_map.html`), or run one of these commands from the project root terminal:
-   ```bash
-   python desktop/server.py index.html
-   ```
-   (Omit `index.html` to launch `mars_2d_map.html` directly.)
-3. The server binds to `http://localhost:8080` (automatically incrementing to `8081–8089` if `8080` is busy) and opens your default web browser.
-
-**Expected result:** The **EVA MARS EXPLORER — MISSION CONTROL** portal appears with two navigation cards: **2D Mars Map** and **3D Globe Explorer**.
+1. Run `desktop/launch_desktop.bat` on Windows (or `python desktop/server.py index.html` from the repository root) and visit `http://localhost:8080/index.html` (or use the hosted web demo).
+2. Always serve over HTTP rather than opening `.html` via `file://`, so the browser can load tile manifests, binary grids, and `route_worker.js`.
+3. Use the top-right **`ENG | VIE`** toggle on any page to switch languages, and choose **`Open 2D map →`** (`mars_2d_map.html`) or **`Open 3D explorer →`** (`mars_3d_map.html`).
 
 ![EVA MARSWALK Mission Portal home screen](docs/assets/tutorial_01_portal_home.png)
-*Figure 1: The EVA MARSWALK Mission Portal (`index.html`) showing the **ENG | VIE** language toggle (top-right) and launch cards for the 2D Mars Map and 3D Globe Explorer.*
+*Figure 1: The EVA MARSWALK Mission Portal (`index.html`) showing the **ENG | VIE** toggle and entry cards for the 2D Explorer and 3D Globe Explorer.*
 
-### Switching Modes and Languages
+### 2. Exploring Mars with the 2D Explorer
 
-- **2D Map vs. 3D Globe Explorer:**
-  - From the portal (`index.html`), click **Open 2D map →** (`mars_2d_map.html`) or **Open 3D explorer →** (`mars_3d_map.html`).
-  - Inside **2D Mars Explorer**, switch pages at any time from the top navigation bar using **2D Map (Active)** / **3D Globe Explorer**.
-  - Inside **3D Globe Explorer**, return to the flat map using **2D Map (72 Tiles LOD)** in the top bar.
-- **Language Switching (`ENG | VIE`):**
-  Click **`ENG`** or **`VIE`** in the top-right corner of the Mission Portal, 2D Explorer, or 3D Globe to toggle interface labels, modals, and alerts between **English** and **Vietnamese**. Your language preference is saved in `localStorage`.
-- **Opening System Settings:**
-  In **2D Mars Explorer**, click **`Settings`** in the bottom-left footer bar to customize themes, mobility profiles, slope limits, performance mode, and safety view options. *(Note: the Settings modal is available on the 2D Explorer page; visual theme changes chosen there persist across all pages via `localStorage`.)*
-
-**Tips and warnings:** Always launch via `desktop/server.py` (or the `.bat` launchers) rather than opening `.html` files with `file://`. Opening HTML files directly without a local web server prevents browsers from loading manifest JSON and tile datasets.
-
----
-
-## 3. Exploring Mars with the 2D Explorer
-
-The **2D Explorer** (`mars_2d_map.html`) is the primary workspace for both planetary inspection and mission planning.
+1. Click and drag on [`mars_2d_map.html`](mars_2d_map.html) to pan across `0°–360°E`, `90°S–90°N`, or click directly inside **`GLOBAL LOCATOR (0°–360°E)`** (bottom-left).
+2. Scroll with the mouse wheel or use **`+`** / **`-`** and **Home (`Reset View`)** on the bottom-right stack to inspect sharper LOD pyramid tiers (`1.00x` up to `250.0x`).
+3. Click any point on Mars to place the red target crosshair, read the bottom-left **`LAT` / `LON`** readout, and toggle surface labels using the **Map Pin** button.
 
 ![2D Mars Explorer main workspace overview](docs/assets/tutorial_02_2d_explorer_overview.png)
-*Figure 2: The 2D Explorer initial screen showing the top command bar, collapsed Layer Ribbon tab (`▲`), global equirectangular canvas, right-edge tool launchers, docked `GLOBAL LOCATOR`, bottom `Settings` and `LAT / LON` readout, and the `3D TERRAIN` Pegman control.*
+*Figure 2: The 2D Explorer main canvas with the top command bar, collapsed Layer Ribbon (`▲`), right-edge tool launchers, `GLOBAL LOCATOR`, bottom `Settings` button, and `3D TERRAIN` Pegman.*
 
-### Main Interface Controls at a Glance
+### 3. Navigating with Fly To, Coordinates & Gazetteer
 
-- **Top Bar:** `EVA MARS EXPLORER` wordmark | **`Algorithms`** & **`Analytics`** buttons | **`2D Map (Active)` / `3D Globe Explorer`** switcher | **`Search Coordinates or Landmark` + `Fly To`** | **`Martian Landmarks...`** dropdown (18 presets) | **`ENG | VIE`** toggle.
-- **Top Center Arrow (`▲` / `▼`):** Collapses or expands the horizontal **Scientific Data Layer Ribbon**.
-- **Right Edge Tool Rail:** Three launcher buttons stacked vertically—**`Marswalk Planner`**, **`Dust Storm`**, and **`Astronaut Monitoring`**—above the bottom-right zoom stack (**`+`**, **`-`**, **Reset View (Home)**, **Toggle Place Names**, **Fullscreen**, and live **ZOOM** badge).
-- **Bottom-Left Dock:** **`GLOBAL LOCATOR (0°–360°E)`** minimap preview, **`Settings`** button, and live cursor/target **`LAT` / `LON`** readout.
-- **Bottom-Right Dock:** **`3D TERRAIN Drag to Mars`** draggable astronaut Pegman icon.
+EVA MARSWALK uses **Latitude (`-90°` to `+90°`)** and **Planetocentric East Longitude (`0°` to `360°E`)** in `lat, lon` order (e.g., `18.38, 77.58` for Jezero Crater).
 
----
-
-### Step-by-Step 2D Navigation Walkthrough
-
-#### 1. Panning Around the Martian Surface
-- **What it does:** Shifts the visible equirectangular map horizontally (`0°E–360°E`) and vertically (`90°S–90°N`).
-- **How to use it:** Click and drag anywhere on the main Martian canvas, or click a destination inside the **`GLOBAL LOCATOR (0°–360°E)`** box in the bottom-left corner.
-- **What you should see:** The map tiles follow your cursor smoothly, the highlighted viewport rectangle in the **`GLOBAL LOCATOR`** tracks your position, and the bottom-left **`LAT`** / **`LON`** coordinates update continuously.
-- **Practical tip:** When panning across the `0°E / 360°E` prime meridian edge, use the **`GLOBAL LOCATOR`** or **`Fly To`** if you want to re-center on Syrtis Major / Arabia Terra immediately.
-
-#### 2. Zooming In and Out
-- **What it does:** Magnifies surface craters, canyons, and volcano rims while automatically loading sharper multi-tier tile levels of detail (LOD).
-- **How to use it:** Scroll your mouse wheel over the map, or click the **`+`** and **`-`** buttons above the **`ZOOM`** indicator on the bottom-right stack. Click the **Home icon** button (**Reset View (`0`)**) to return to the global `1.00x` full-planet view, or click the **Fullscreen** arrows button to expand the workspace.
-- **What you should see:** The **`ZOOM`** readout changes from `1.00x` upward (for example `4.00x` or `16.00x`) and tile resolution sharpens after a brief fetch.
-- **Practical tip:** For route planning between local sites around a crater, zoom in between `5x` and `16x` so waypoint markers and terrain slopes are easy to read.
-
-#### 3. Using the Coordinate Grid and Identifying Locations
-- **What it does:** Displays latitude (`90°N` down to `90°S`), equator line (`0° (Equator)`), and east longitude (`0°E` to `360°E`) gridlines, alongside labeled surface features (`Olympus Mons`, `Jezero Crater (Perseverance)`, `Valles Marineris`, `Hellas Planitia`, etc.).
-- **How to use it:**
-  - Click anywhere on the map to place the red target crosshair and inspect that exact coordinate.
-  - Toggle feature labels on or off with the **Map Pin (`Hide place names`)** icon button in the bottom-right control stack.
-- **What you should see:** Clicking on the surface updates the bottom-left **`LAT`** / **`LON`** badges and displays an on-map callout pill near the crosshair (for example, `Jezero Crater (Perseverance) • Viking MDIM 2.1 Color`).
-- **Practical tip:** Look at the callout pill or open **Astronaut Monitoring** (right rail) to verify whether your selected point landed on a crater floor, canyon rim, or smooth plain before making it a mission waypoint.
-
-#### 4. Navigating with the Global Locator and Fly To
-- **What it does:** Jumps straight to any latitude/longitude or named feature without manual panning.
-- **How to use it:** Type a coordinate pair such as `18.38, 77.58` or a feature name such as `Jezero Crater` into **`Search Coordinates or Landmark`**, press **`Enter`** or click **`Fly To`**, or pick one of the presets in **`Martian Landmarks...`**.
-- **What you should see:** The canvas centers smoothly on your target (zooming to `4.00x–6.50x`), places the target crosshair on the site, and moves the viewport rectangle inside **`GLOBAL LOCATOR (0°–360°E)`**.
-- **Practical tip:** Remember that EVA MARSWALK uses **Planetocentric East Longitude (`0°–360°E`)**, so `18.38, 77.58` means `18.38°N, 77.58°E`.
+| Search Control | Location | Accepted Input | Behavior |
+|---|---|---|---|
+| **Global Search + `Fly To`** | 2D top bar | Feature name (`Olympus Mons`, `Jezero`) or `lat, lon` | Smoothly centers camera (`4.00x–6.50x`), places target crosshair, and updates `GLOBAL LOCATOR`; alerts if unparseable |
+| **`Martian Landmarks...` / `Landmarks`** | 2D / 3D top bar | Dropdown presets (`18` 2D presets; `13` 3D pins) | Jumps directly to volcanoes, craters, basins, poles, and landing sites |
+| **IAU/USGS Gazetteer Search** | **Marswalk Planner** drawer | Searchable dropdown (`27` cataloged features) | Fills Start (`S`) or Destination (`D`) `Latitude` and `Longitude` fields for route computation |
 
 ![2D Explorer zoomed to Jezero Crater using Fly To](docs/assets/tutorial_05_locator_flyto.png)
-*Figure 3: Zooming into Jezero Crater (`18.38, 77.58`) via **Fly To**—showing the zoomed `4.00x` surface mosaic, target crosshair callout, updated **`GLOBAL LOCATOR`** box, and bottom-left coordinate badges.*
+*Figure 3: Zooming into Jezero Crater (`18.38°N, 77.58°E`) via **Fly To**—showing the zoomed basemap, crosshair callout, and updated `GLOBAL LOCATOR` footprint.*
 
-#### 5. Interpreting Terrain and Launching Local 3D Inspection
-- **What it does:** Lets you inspect regional craters and scarps in true 3D perspective without leaving the 2D Explorer.
-- **How to use it:** Click and drag the **`3D TERRAIN`** astronaut icon (bottom-right) onto any spot on the 2D map canvas and release it. (See [Section 13](#13-inspecting-local-3d-terrain-around-a-point) for full details.)
-- **What you should see:** A **`MARS TERRAIN VIEW`** modal opens with a rotatable `40° × 40°` (~`2,366 km`) WebGL relief block centered on the drop location.
-- **Practical tip:** Visual brightness in **`Main RGB`** represents albedo (dark basaltic sand vs. bright dust), **not** height—always switch to the **`MOLA Elevation`** or **`Terrain Slope`** layer to judge actual steepness and altitude.
+### 4. Switching Scientific Data Layers (2D Ribbon)
 
----
-
-## 4. Using Scientific Data Layers and Interpreting Colors
-
-**Purpose:** Switch between Mars visual imagery and 7 scientific datasets to understand elevation, terrain steepness, gravity variations, and modeled atmospheric pressure across Mars.
-
-**How to use it:**
-1. Click the small upward arrow tab (**`▲`**) centered just below the top navigation bar to open the **Scientific Data Layer Ribbon**.
-2. Click any of the 8 layer cards (scroll left/right with **`◀`** / **`▶`** if your window is narrow).
-3. Inspect the floating **`Scale:`** bar that appears at the bottom center whenever a numeric scientific layer is active. Move your pointer or click on the map to read the live **`Selected:`** marker along the color ramp.
+Click the centered **`▲`** tab below the top bar to expand the **Scientific Data Layer Ribbon**, select any of the **8 layers**, and read the bottom **`Scale:`** bar alongside the live **`Selected:`** cursor value. Remember that visual brightness in `Main RGB` is surface albedo, not elevation—switch to `MOLA Elevation` or `Terrain Slope` to judge physical steepness.
 
 ![Scientific Data Layer Ribbon expanded with MOLA Elevation selected](docs/assets/tutorial_04_layer_selector.png)
-*Figure 4: The expanded top layer ribbon with **MOLA Elevation** selected, grayscale topographic relief (bright highs at Olympus Mons/Tharsis, dark lows in Hellas Planitia), and the bottom **`Scale: MOLA Elevation`** bar (`-8,201 m` to `+21,241 m`).*
+*Figure 4: Expanded top layer ribbon with `MOLA Elevation` active (`-8,201 m` to `+21,241 m`) showing deep dark basins and bright volcanic highlands.*
 
-### Available 2D Layers
+### 5. Exploring the 3D Mars Globe
 
-| Layer Button | Unit | Type | Color & Physical Interpretation |
-|---|---|---|---|
-| **Main** (`RGB`) | Visual | Measured Mosaic (Viking MDIM 2.1) | Natural-color albedo imagery; dark regions like Syrtis Major are basaltic rock/sand, bright regions are dust-covered plains or polar ice. |
-| **MOLA Elevation** | `m` | Measured Topography (MGS MOLA `GTM090AA`) | Grayscale elevation relative to the Martian datum (`-8,201 m` to `+21,241 m`): darker = deep basins (Hellas Planitia, Valles Marineris floor); bright white = high volcanic shields (Olympus Mons, Tharsis Montes). |
-| **Atmospheric Pressure (Modeled)** | `Pa` | Modeled Estimate (`Barometric Model P(h)`) | Altitude-driven surface pressure estimate calibrated against Mars conditions; low basins hold denser air (~770+ Pa at Jezero), while summit volcanoes drop into near-vacuum (~99 Pa at Olympus Mons). |
-| **Free-Air Gravity Anomaly** | `mGal` | Measured Gravity (MRO `JGMRO_120g`) | Subsurface mass anomalies on a `720×360` grid; positive values mark massive volcanic constructs or dense mascons, negative values mark uncompensated basins. |
-| **Terrain Slope** | `deg (°)` | Derived Value | Local steepness computed from elevation gradients; highlights crater rims, chasma walls, and escarpments that threaten rover or astronaut traversal. |
-| **Surface Gravitational Acceleration** | `m/s²` | Derived Value | Total local gravity combining mass distribution and planetary flattening/rotation (~`3.71 m/s²` mean, varying locally with relief and gravity anomaly). |
-| **Geoid / Areoid Undulation** | `m` | Derived Value | Equipotential reference surface height difference relative to the Martian ellipsoid (`+2,695 m` near Jezero Crater). |
-| **Differential Gravity (120G - 120F)** | `mGal` | Derived Comparison | Difference between gravity models `MRO120G` and `MRO120F`, useful for comparing crustal refinement across regions. |
-
-**Expected result:** The map canvas updates immediately to your chosen layer and displays its calibrated scale bar (`Min`, `Mid`, `Max`, plus `Selected:` marker). Click **`▼`** at the top center to collapse the ribbon again for a cleaner view.
-
-**Tips and warnings:** Switching visual layers changes what is drawn on screen—and **`MOLA Elevation`**, **`Terrain Slope`**, and **`Atmospheric Pressure`** reflect the exact terrain data consulted by the pathfinder—but switching layers does **not** alter already plotted route lines until you click **`Calculate Route`**.
-
----
-
-## 5. Exploring Mars with the 3D Globe Explorer
-
-**Purpose:** Visualize Mars as a true 3D rotating sphere with radial terrain displacement, orbital atmospheric sounding tracks, and an always-open **Astronaut Survival Monitor**.
-
-**How to use it:**
-1. Open **3D Globe Explorer** from the Mission Portal (`index.html`), or click **`3D Globe Explorer`** in the top bar of the 2D Explorer.
-2. Rotate Mars by dragging on the globe, zoom in/out with your scroll wheel, or click **`Reset`** in the top-right bar to restore the default view. Click **`Full`** for fullscreen mode.
-3. Click anywhere on the 3D globe surface to drop the location pin and inspect telemetry on the right panel.
+1. Switch to **3D Globe Explorer** (`mars_3d_map.html`) from the portal or top bar.
+2. Adjust **`3D TERRAIN RELIEF`** (`1x`, `2x`, `5x`, `10x`) and **`SPACE DISPLAY`** (`Lat/Lon Grid 30°`, `Pin 13 Landmarks`, `Auto-Rotate`, `Layer Opacity`), or toggle **`MCS Sounding Tracks (1,153)`**.
+3. Click any point on the sphere to inspect **ASTRONAUT SURVIVAL MONITOR** and expand **`DETAILS ▼`** on `SELECTED LOCATION` for Cartesian `(X, Y, Z)` coordinates, planetary radius, gravity anomaly, and MCS atmospheric profiles when covered by a track.
 
 ![3D Mars Globe Explorer overview with 5x relief and Survival Monitor](docs/assets/tutorial_03_3d_globe.png)
-*Figure 5: The **3D Globe Explorer** (`mars_3d_map.html`) focused on **Olympus Mons** (`18.6°N, 226.2°E`) with `5.0x` **3D TERRAIN RELIEF**, the **SPACE DISPLAY** toggles on the left, and the **ASTRONAUT SURVIVAL MONITOR** warning (`DANGEROUS 38/100`) on the right.*
-
-### Controls Unique to the 3D Globe Explorer
-
-- **Top Layer Tabs (6 Layers + Sounding Overlay):**
-  Switch among **`MOLA Elevation` (`m`)**, **`Gravity Anomaly` (`mGal`)**, **`Surface Slope` (`deg (°)`)**, **`Surface Gravity g` (`m/s²`)**, **`Geoid Undulation N` (`m`)**, and **`Gravity Diff (120G - 120F)` (`mGal`)**, or toggle **`MCS Sounding Tracks (1,153)`** to display orbital Mars Climate Sounder strips over the globe.
-- **Left Panel — `3D TERRAIN RELIEF`:**
-  Pick **`1x`**, **`2x`**, **`5x`** (default), or **`10x`**, or drag the slider to amplify radial height displacement so volcanoes rise visibly and basins like Hellas sink inward.
-- **Left Panel — `SPACE DISPLAY`:**
-  Toggle **`Lat/Lon Grid 30°`**, **`Pin 13 Landmarks`**, and **`Auto-Rotate`**, or adjust **`Layer Opacity`** (`0–100%`).
-- **Right Panel — `ASTRONAUT SURVIVAL MONITOR` & `SELECTED LOCATION`:**
-  Shows live safety status (`SAFE`, `CAUTION`, or `DANGEROUS`), `Survival Index` (`/100`), `Temperature (T)`, `Pressure (P)`, `Terrain Slope`, `Airborne Dust (τ)`, `Estimated Safe EVA Duration`, and `LOCAL ENVIRONMENTAL WARNINGS`. Click **`DETAILS ▼`** on the `SELECTED LOCATION` card to expand the full geophysical dossier (`Planetographic Lat`, `West Longitude`, `3D Coordinates (X, Y, Z)`, `MOLA Elevation (h)`, `Planetary Radius (R)`, `Terrain Slope (θ)`, `Gravity Anomaly`, and vertical MCS sounding chart when a sounding track covers that spot).
+*Figure 5: **3D Globe Explorer** centered on Olympus Mons (`5.0x` relief) with **ASTRONAUT SURVIVAL MONITOR** flagging `DANGEROUS (38/100)` due to low summit pressure.*
 
 ![3D Globe Selected Location details expanded](docs/assets/tutorial_03_3d_globe_details.png)
-*Figure 6: Expanding **`DETAILS ▼`** (`COLLAPSE ▲`) on **3D Globe Explorer** reveals full Cartesian `(X, Y, Z)` coordinates, planetary radius, MOLA height (`+19,419 m`), and gravity anomaly (`+3104.5 mGal`) at Olympus Mons.*
+*Figure 6: Expanded `DETAILS ▼` geophysical card on the 3D Globe displaying Cartesian `(X, Y, Z)`, planetary radius, MOLA height, and gravity anomaly.*
 
-**Tips and warnings:**
-- Notice the **Data Provenance** panel in the bottom-left (`NASA DATA SOURCES`): `MGS MOLA: GTM090AA`, `MRO RSS: MR0120G / 120F`, `MRO MCS: 2025073120_DDR`, `Suit: NASA xEMU Standard`.
-- The **3D Globe Explorer** is built for global visualization and location inspection; mission route planning (`Marswalk Planner`), algorithm benchmarking, and system **`Settings`** live in the **2D Explorer** (`2D Map (72 Tiles LOD)`).
+### 6. Monitoring Astronaut Safety
 
----
-
-## 6. Searching Locations, Landmarks, and Coordinates
-
-EVA MARSWALK provides three ways to jump to locations depending on what you are doing:
-
-| Search Tool | Where It Lives | Accepted Input | Behavior |
-|---|---|---|---|
-| **Global Search Bar + `Fly To`** | 2D Explorer top bar | Landmark name (`Olympus Mons`, `Jezero`, etc.), IAU/USGS gazetteer name, tile filename, or `lat, lon` (`18.38, 77.58`) | Flies the 2D camera smoothly (`4.00x–6.50x`), places the target crosshair, and updates **`GLOBAL LOCATOR`**. |
-| **`Martian Landmarks...` / `Landmarks`** Dropdown | Top bar (2D has 18 presets; 3D has `-- Select Landmark --`) | Preset selection from dropdown | Instantly centers the map or rotates the 3D globe onto major volcanoes, basins, canyons, poles, and NASA landing sites. |
-| **IAU/USGS Gazetteer Search** (`routeStartSearch` / `routeDestSearch`) | Inside **Marswalk Planner** drawer (`Starting Point` and `Destination` boxes) | Feature name (e.g., `Jezero Crater`, `Gale Crater`) | Filters a searchable dropdown list with coordinates, feature type, and source (`IAU / USGS` or `NASA JPL`); clicking a result fills the `Latitude` and `Longitude` boxes for routing. |
-
-### Coordinate System & Error Behavior
-
-- **Coordinate Convention:** EVA MARSWALK uses **Latitude (`-90°` to `+90°`)** and **Planetocentric East Longitude (`0°` to `360°E`)**. Enter latitude **first**, longitude **second** (for example: `18.65, 226.2` for Olympus Mons or `-5.37, 137.81` for Gale Crater).
-- **Invalid Search Input Behavior:**
-  - In **2D Explorer**, if you enter unparseable text (or miss a valid pair) and click **`Fly To`**, the app triggers a browser alert: *"Could not parse location. Please enter coordinates like: '18.65, 226.2' or landmark name like 'Olympus Mons'"*.
-  - In **3D Globe Explorer**, the `Coords: Lat / Lon / Fly To` bar validates numeric bounds explicitly: entering non-numeric or incomplete coordinates triggers the alert *"Please enter valid latitude (-90 to +90) and longitude (0 to 360)."*, and values outside range are clamped/wrapped (`[-90, 90]` lat, `[0, 360)` lon).
-
----
-
-## 7. Monitoring Astronaut Safety and Environmental Conditions
-
-**Purpose:** Evaluate whether a chosen site on Mars is livable for a simulated **NASA xEMU** spacesuit before committing to a route.
-
-**How to use it:**
-1. In **2D Explorer**, click any spot on the map (or fly to a landmark like **Jezero Crater**).
-2. Click the **Astronaut Monitoring** icon button (bottom of the three-button rail on the right edge, just above `+` / `-`).
-3. Click **`Mission Details ▲ / ▼`** inside the drawer to expand or collapse the **CRITERIA SAFETY BREAKDOWN** and **PLANETARY SCIENCE PARAMETERS (6 LAYERS)**.
-*(On **3D Globe Explorer**, the **ASTRONAUT SURVIVAL MONITOR** is visible continuously on the right side of the screen.)*
+Click the **Astronaut Monitoring** button on the right-edge tool rail in 2D Explorer (or inspect the right panel on 3D Globe) and expand **`Mission Details ▲ / ▼`** to view temperature, barometric pressure, terrain slope, airborne dust ($\tau$), radiation estimate, **`Estimated Safe EVA Window`**, and local warnings.
 
 ![2D Astronaut Monitoring panel showing Jezero Crater SAFE 99/100](docs/assets/tutorial_06_astronaut_monitoring.png)
-*Figure 7: The **ASTRONAUT MONITORING** slide-out panel at **Jezero Crater (Perseverance)** displaying `SAFE` (`99/100`), individual metric ratings, and the expanded **Mission Details** breakdown.*
+*Figure 7: **ASTRONAUT MONITORING** at Jezero Crater showing `SAFE (99/100)` and expanded 6-layer planetary telemetry.*
 
-### How to Read the Safety Metrics
+### 7. Planning a Marswalk Mission
 
-The **MODEL-BASED SAFETY INDEX (`/100`)** uses a strict bottleneck evaluation across five environmental parameters:
-
-- **Temperature (`T`):** Ambient surface temperature estimate (safe nominal envelope shown in detail cards, e.g., `213.3 K / -59.9°C` at Jezero Crater = `SAFE 100/100`).
-- **Atmospheric Pressure (`P`):** Modeled via `Barometric Model P(h)` (or MRO MCS where sounding tracks overlap). High altitudes suffer severe low-pressure decompression risk (`Olympus Mons` = `99.2 Pa`, `DANGEROUS`, driving Survival Index down to `38/100` in Figure 5), whereas deep basins like **Jezero Crater** reach `772.8 Pa` (`95/100 SAFE`).
-- **Terrain Slope (`θ`):** Local terrain gradient derived from MOLA elevation (`0.62°` flat at Jezero Crater = `100/100 SAFE`).
-- **Airborne Dust (`τ`):** Atmospheric optical depth (`0.0200` clear-sky baseline = `100/100 SAFE` unless a dust storm is active).
-- **Radiation (`R`, 2D panel):** Ambient Solar & GCR dose estimate (`0.645 mSv/d` vs ALARA `≤ 0.72 mSv/day` = `100/100 SAFE`).
-
-**Expected result:** A green **`SAFE`** badge (such as `99/100` at Jezero Crater), yellow **`CAUTION`** badge, or red **`DANGEROUS`** banner (`38/100` at Olympus Mons summit), together with an **`Estimated Safe EVA Window`** (`8.0 Hours (Nominal 8h SOR)`) and **`LOCAL ENVIRONMENTAL ADVISORIES`**.
-
-**Tips and warnings:** Because **EVA MARSWALK** applies a **Strict Severity Bottleneck**, a single critical failure (such as near-vacuum pressure `<150 Pa` on Olympus Mons) marks the location **`DANGEROUS`** even when temperature and slope look benign.
-
----
-
-## 8. Planning a Marswalk Mission
-
-**Purpose:** Configure endpoints, astronaut suit load, and safety preferences to compute a terrain-verified route on the 2D Mars surface.
-
-**How to use it:**
-1. Click the top button on the right-edge tool rail (**Marswalk Planner** compass icon) to slide open the planner drawer.
-2. **Set `Starting Point` (`S`) and `Destination` (`D`):** Use any of three methods:
-   - **Gazetteer Search:** Type a Martian landmark name in `Named Martian Location (IAU/USGS Gazetteer)` and click a match from the dropdown.
-   - **Direct Coordinates:** Type decimal `Latitude (°)` and `Longitude (°E)` values directly.
-   - **Map Picking:** Click **`Select Start on Map`** (green) or **`Select Destination on Map`** (red), then click directly on the Martian surface.
-   *(Tip: Click **`⇅ Swap Start / Destination`** if you want to reverse endpoints to check the uphill vs. downhill return leg manually!)*
+1. Open **Marswalk Planner** (top icon on the right rail).
+2. Set **`Starting Point` (`S`)** and **`Destination` (`D`)** via Gazetteer search, decimal coordinates, or **`Select Start/Destination on Map`**. (Use **`⇅ Swap Start / Destination`** to test the reverse direction for uphill/downhill asymmetry.)
+3. Adjust **`Walking Speed`** (`0.1–15.0 m/s`, default `1.2 m/s`), **`Body Mass`** (default `80 kg`), **`Equip Mass`** (default `15 kg`, `+50 kg NASA xEMU` added automatically = `145.0 kg`), and **`O₂ Cap`** (default `480.0 L` in UI).
+4. Pick an **`Optimization Objective`** (`Minimum Risk`, `Minimum Energy Consumption`, `Minimum Elevation Variation`, or `Balanced Optimization`), tune weights if desired, and click **`🚀 Calculate Route`**.
 
 ![Marswalk Planner drawer configured at Jezero Crater](docs/assets/tutorial_07_marswalk_planner_config.png)
-*Figure 8: Setting **`Starting Point`** to **Jezero Crater** (`18.41°N, 77.69°E`) via the IAU/USGS Gazetteer and **`Destination`** (`17.60°N, 79.10°E`), with green **`START (S)`** and red **`D`** markers placed on the map.*
-
-3. **Review `ASTRONAUT PARAMETERS` (`SHARED`):**
-   - **Active Algorithm:** Displays the active solver (default **`Field D*`**). Click **`Configure ⚡`** to switch algorithms or benchmark them.
-   - **`Walking Speed` (`m/s`):** Default `1.2 m/s` (range `0.1–15.0 m/s`).
-   - **`Body Mass` (`kg`):** Default `80.0 kg` (range `30–250 kg`).
-   - **`Equipment Mass` (`kg`):** Default `15.0 kg` (range `0–100 kg`).
-   - **Auto Suit Load:** `+50.0 kg NASA xEMU` is added automatically (default **`Total: 145.0 kg`**).
-   - **`O₂ Capacity` (`L`):** Default `480.0 L` (range `50–2000 L`, with `20%` return reserve = `96 L`).
-   - **`Slope Limit` & `Corridor`:** Shows active directional thresholds (`Slope: +22.0° / -16.5° • Corridor: 30 km`). Click **`Slope ⚙️`** to jump straight into **Settings → Profile & Constraints**.
-4. **Choose `Optimization Objective` and Safety Options:**
-   - **`Minimum Risk (Default Safety Priority)`** (`min_risk`)
-   - **`Minimum Energy Consumption`** (`min_energy`)
-   - **`Minimum Elevation Variation`** (`min_elevation`)
-   - **`Balanced Optimization`** (`balanced`)
-   - Optionally check **`Allow CAUTION Segments (Relaxed Risk)`** if strict SAFE-only corridors cannot reach your destination, or expand **`⚙️ Weight & Safety Tuning ▼`** to adjust the 6 weighting sliders (`Risk: 35`, `Elevation: 25`, `Slope: 20`, `Roughness: 10`, `Distance: 5`, `Energy: 5`, plus **`Reset to Recommended Weights`**).
-5. Click **`🚀 Calculate Route`**. (During long searches, click **`Cancel`** if needed; **`Clear`** resets endpoints.)
+*Figure 8: Configuring Start (`18.41°N, 77.69°E`) and Destination (`17.60°N, 79.10°E`) inside **Marswalk Planner** before execution.*
 
 ![Generated SAFE Field D* route and Route Telemetry Summary](docs/assets/tutorial_08_generated_route.png)
-*Figure 9: After clicking **`Calculate Route`** (`18.41°N, 77.69°E` to `17.20°N, 80.50°E`), the canvas displays the continuous `Field D*` trajectory and **`Route Telemetry Summary`** (`187.90 km`, `44.61 h`, `7760.9 L` O₂ required, triggering **`O₂ DEFICIT WARNING`** against the 480 L single-EVA tank).*
+*Figure 9: Generated continuous `Field D*` path with **`Route Telemetry Summary`** and an expected **`O₂ DEFICIT WARNING`** on a regional 187.9 km traverse under a 480 L single-EVA tank.*
 
-**Expected result:** Once computation finishes, the planner shows:
-1. A colored trajectory drawn between **`START (S)`** and **`DESTINATION (D)`** on the map (and a top banner message such as `✓ CONTINUOUS ANY-ANGLE TRAJECTORY verified: SAFE`).
-2. **`Route Validation Report`** (with a **`Corridor Map`** eye/shield toggle in the drawer header, raw/final waypoints, direct vs. corridor status, minimum distance to unsafe slopes, max directional uphill/downhill slope, and `Path-to-Straight-Line Ratio`).
-3. **`Route Telemetry Summary`** (Total Distance, Estimated Time, Total O₂ Consumed, Remaining Oxygen, Avg O₂ Rate (VO₂), Trajectory Smoothness, plus **`O₂ DEFICIT WARNING`** if O₂ consumption exceeds your configured tank).
-4. Collapsible **`Detailed Topographic & Life Support Parameters`** (cumulative ascent/descent, min safety score, missing data coverage, `Electrical Equivalent Wh`) and **`Algorithm Diagnostics & Search State`** (grid snapping, search stage reached, nodes expanded, CPU time, PDS pressure check).
+### 8. Comparing Pathfinding Algorithms
 
-**Tips and warnings:** Long regional traverses across tens or hundreds of kilometers intentionally trigger **`O₂ DEFICIT WARNING`** under standard single-EVA `480 L` xEMU capacity. Either plan shorter `≤ 10–15 km` sorties for single-suit EVAs, or treat longer traverses as unpressurized/resupplied rover-range engineering studies by raising `O₂ Capacity` or selecting the **`Robotic Rover`** profile.
-
----
-
-## 9. Selecting and Comparing Pathfinding Algorithms
-
-**Purpose:** Understand how different pathfinding engines solve the same Martian terrain problem, and pick the best solver for your mission.
-
-**How to use it:**
-1. Click **`Algorithms`** in the top header bar (or click **`Configure ⚡`** inside the Marswalk Planner).
-2. In **SECTION A: ACTIVE ALGORITHM SELECTION**, click any of the four solver cards to set it as active:
-   - **`Field D*` (`RECOMMENDED`):** Continuous any-angle linear interpolation (`Ferguson & Stentz, NASA JPL`) — produces smooth diagonal paths without `45°/90°` grid zigzags.
-   - **`D* Lite` (`DYNAMIC REPLAN`):** Discrete 8-connected dynamic replanning (`Koenig & Likhachev`).
-   - **`Fast Marching (FMM)` (`WAVEFRONT PDE`):** Continuous Eikonal wavefront PDE gradient descent.
-   - **`Baseline A*` (`OPTIMAL BASELINE`):** Standard discrete 8-connected graph search.
-3. Click **`🔄 Re-Run Benchmark on Current Map`** in **SECTION B: FOUR-ALGORITHM BENCHMARK COMPARISON** (ensure a Start and Destination are selected first).
+Click **`Algorithms`** in the header (or **`Configure ⚡`** inside Marswalk Planner) to switch active solvers or click **`🔄 Re-Run Benchmark on Current Map`** to compare `Field D*`, `D* Lite`, `Fast Marching (FMM)`, and `Baseline A*` on CPU time, expanded nodes, distance, O₂ burn, and smoothness.
 
 ![Algorithms & Benchmark Suite comparing all four solvers side-by-side](docs/assets/tutorial_09_algorithm_comparison.png)
-*Figure 10: **Algorithms & Benchmark Suite** comparing `Field D*`, `D* Lite`, `Fast Marching (FMM)`, and `Baseline A*` on identical Jezero Crater terrain, showing CPU time, expanded nodes, distance, O₂ consumption, O₂ saved vs. A\*, smoothness, and comparison bar charts.*
+*Figure 10: **Algorithms & Benchmark Suite** comparing all four algorithms side-by-side on identical Jezero Crater terrain.*
 
-**Expected result:** All four algorithms run sequentially using identical elevation/slope grids and astronaut parameters, populating the side-by-side table and **Chart 1 (`Distance (m)` & `Total O₂ (L)`)** + **Chart 2 (`Smoothness (%)` & `CPU Time (ms)`)**. You can click **`Select`** directly inside any table row to activate that solver.
+### 9. Running the Simulated Astronaut Walk
 
-**Tips and warnings:** Switching algorithms here updates **`Marswalk Planner`** immediately, so your next **`Calculate Route`** click uses the newly selected engine. Scroll down inside the modal to read **Section C: Algorithm Core Principles & Search Strategies** if you want a quick refresher on how each solver works.
-
----
-
-## 10. Running the Simulated Astronaut Walk
-
-**Purpose:** Watch the simulated astronaut traverse your calculated route step-by-step and observe how local terrain slope and atmospheric dust affect speed and telemetry in real time.
-
-**How to use it:**
-1. Calculate a valid route in **Marswalk Planner** first.
-2. Scroll down inside the planner drawer to **`Simulated Astronaut Walk`**.
-3. Choose a **Simulation Time Multiplier** using the dropdown or pill buttons (`1×`, `2×`, `5×`, `10×`, `20×` default, `40×`, `80×`, `100×`, `150×`, or `200×`).
-4. Click **`▶ Start Walk`** to begin (the button turns into **`Pause`** while running and **`▶ Resume Walk`** when paused). Click **`↺ Reset`** to move the astronaut back to `0%` at Start.
+After generating a route, scroll down in **Marswalk Planner** to **`Simulated Astronaut Walk`**, select a playback multiplier (`1×` up to `200×`), and click **`▶ Start Walk`** to animate traversal with real-time position, speed, segment slope (`θ`), and local storm telemetry updates.
 
 ![Astronaut walk simulation running along the Jezero Crater path](docs/assets/tutorial_11_astronaut_simulation.png)
-*Figure 11: Mid-traversal capture at `200× Sim` (`1.2 m/s × 200× = 240.0 m/s sim`): the astronaut marker advances along the computed path while live telemetry updates position (`18.34°N, 77.75°E`), `Sim Time`, `Sim Dist`, `Seg Slope (θ)`, and `Local Tau / Wind`.*
+*Figure 11: Mid-traversal playback at `200× Sim` updating coordinate progress, `Sim Time`, `Sim Dist`, and segment slope (`θ`).*
 
-**Expected result:** A miniature astronaut marker glides along the calculated polyline on the 2D canvas, progress advances (`0%` to `100%`), and six live telemetry readouts update continuously:
-- `Position` (`lat°, lon°`)
-- `Sim Time` (`T+...h`)
-- `Walk Speed` (`m/s` and `km/h`)
-- `Sim Dist` (`traversed / total km`)
-- `Seg Slope (θ)` (for example `+0.21° (FLAT)`)
-- `Local Tau / Wind` (`0.35 / 10 km/h` baseline clear conditions)
+### 10. Simulating and Avoiding Dust Storms
 
-**Tips and warnings:** A `200×` multiplier (`240 m/s`) lets you preview a `10 km` EVA in ~42 real seconds, whereas multi-hundred-kilometer routes take proportionally longer. Always check the four-color leg legend (**`SAFE`**, **`CAUTION`**, **`UNSAFE`**, **`UNKNOWN`**) directly beneath the telemetry card.
-
----
-
-## 11. Simulating and Responding to Dust Storms
-
-**Purpose:** Model localized Martian dust storms with customizable size, intensity, and movement vectors, and observe how pathfinding detours around or rejects blocked corridors.
-
-**How to use it:**
-1. Open the **`🌪️ Dust Storm`** tab inside the right-hand drawer (or click the middle tornado icon on the right tool rail).
-2. **Create and Place a Storm:**
-   - Either click **`+ Add Storm`** under **`Active Storms`** (or **`📍 Place Storm on Mars Map`** and click a point on the 2D canvas), or type **`Latitude (°)`** and **`Longitude (°E)`** manually.
-3. **Configure Physical & Atmospheric Parameters:**
-   - **`2. Propagation Vector`:** Pick one of 8 compass headings (**`N (0°)`** to **`NW (315°)`**) or drag the `0°–359°` angle slider.
-   - **`3. Storm Size (Physical Mars Scale)`:** Drag **`Radius (R)`** (`20–600 km`); the panel automatically reports **`Diameter (2R)`** and **`Affected Area (km²)`**.
-   - **`4. Intensity & Atmospheric Impact`:** Click **`Weak`**, **`Moderate`**, **`Strong`**, or **`Severe`** to inspect `Modeled Peak Δτ` and `Modeled Peak Wind (km/h)`.
-   - **`5. Movement Simulation & Clock`:** Click **`▶ Simulate Storm Movement`** (or step **`+1h`** / **`+6h`** at `1x`, `10x`, or `100x` speed, with **`Physical Storm Velocity`** from `0–100 km/h`).
-4. Switch back to **`Marswalk Planner`** and click **`🚀 Calculate Route`** to recompute your trajectory with the active storm hazard field enabled. Click **`Clear All`** when finished to remove all storms.
+1. Open the **`🌪️ Dust Storm`** tab (middle rail icon).
+2. Click **`+ Add Storm`** (or **`📍 Place Storm on Mars Map`**), set **`Radius (R)`** (`20–600 km`), intensity (**`Weak` / `Moderate` / `Strong` / `Severe`**), propagation direction (`0°–359°`), and movement velocity (`0–100 km/h`).
+3. Advance time with **`▶ Simulate Storm Movement`**, **`+1h`**, or **`+6h`**, then re-run **`🚀 Calculate Route`**. Storms breaching `tau >= 2.0`, `wind > 100 km/h`, or the **48h arrival buffer** force autonomous detours or cleanly abort with `STORM_EXCLUSION`.
 
 ![Dust Storm overlay and configuration panel on the 2D Mars Explorer](docs/assets/tutorial_12_dust_storm.png)
-*Figure 12: Active **`DUST STORM #1`** (`R=320 km`, `Strong`, `Modeled Peak Δτ: 3.50`, `Peak τ = 3.85`, `Peak Wind: 75 km/h`) centered near `17.85°N, 79.05°E`, displaying its dashed hazard radius, wind vector arrow, and atmospheric controls.*
+*Figure 12: Active **`DUST STORM #1`** (`Strong`, `R = 320 km`, `Peak Wind: 75 km/h`) rendered with its dashed hazard perimeter and propagation arrow.*
 
-**Expected result:**
-- The 2D map renders a semi-transparent storm circle with a dashed red boundary and white wind-direction arrow.
-- During live testing between Jezero Crater (`18.41°N, 77.69°E`) and Isidis Planitia (`17.20°N, 80.50°E`):
-  - Placing a smaller **32 km** storm offset across the mid-corridor forced **`Field D*`** to compute a **`193.53 km` detour** (`23` waypoints, vs. `187.90 km` clear-sky) cleanly bypassing the storm perimeter.
-  - Placing an overlapping **320 km** `Strong` storm (`Peak τ = 3.85`, exceeding the `τ ≥ 2.0` **UNSAFE** threshold and `48h Buffer`) blocked both Start and Destination and rightly aborted with **`❌ STORM_EXCLUSION`**.
+### 11. Inspecting Biophysical Analytics
 
-**Tips and warnings:** Pay attention to the **`Mission Hazard Thresholds`** legend at the bottom of the Dust Storm tab:
-- **`SAFE`:** $\tau < 1.5$ and wind $\le 40\text{ km/h}$
-- **`CAUTION`:** $1.5 \le \tau < 2.0$ or $40 < \text{wind} \le 100\text{ km/h}$
-- **`UNSAFE`:** $\tau \ge 2.0$ or wind $> 100\text{ km/h}$ or within the **48h Buffer**
-
----
-
-## 12. Inspecting the Telemetry & Biophysical Analytics Dashboard
-
-**Purpose:** Review detailed oxygen consumption curves, walking speed fluctuations, elevation profiles, and the exact biophysical equations driving your current route.
-
-**How to use it:**
-1. Calculate an active route in **Marswalk Planner** first.
-2. Click **`Analytics`** in the top header bar (or toggle from **`Algorithms`** → **`Analytics`** inside the shared dashboard modal).
-3. Click **`🔄 Sync Telemetry`** at the top-right of the dashboard if you modified astronaut suit mass, speed, or O₂ capacity after opening the modal.
+Click **`Analytics`** in the top header after computing a route (use **`🔄 Sync Telemetry`** after changing suit parameters) to inspect the 6 KPI cards, coupled **Walking Speed & Oxygen Flow** SVG plot, **DEM Elevation Profile**, **Coupled Martian EVA Mathematical Model**, and raw LaTeX export.
 
 ![Mars EVA Telemetry & Biophysical Analytics Dashboard populated with active route data](docs/assets/tutorial_10_analytics.png)
-*Figure 13: The **Analytics Dashboard** synchronized to an active `95.54 km` Jezero Crater route—displaying 6 summary cards, the dual-axis **Coupled Walking Speed & Oxygen Flow Rate** SVG plot, the **Martian DEM Elevation Profile**, and the **Coupled Martian EVA Mathematical Model**.*
+*Figure 13: **Analytics Dashboard** synchronized to an active Jezero Crater traverse with speed, VO₂, elevation profile, and live parameter formulas.*
 
-### What Each Region Shows
+### 12. Inspecting Local 3D Terrain on the Spot
 
-- **Region 1 (6 Summary Cards):**
-  1. `Total Traverse Distance` (km, waypoints, simulated km traversed)
-  2. `EVA Duration vs. Suit Limit` (compares estimated walk hours against the `8.0 h` hard xEMU SOR limit and O₂ endurance)
-  3. `Effective Walking Speed` (mean terrain-coupled $v_{\text{eff}}$ vs configured $v_0$)
-  4. `Oxygen Flow Rate` (average, peak, and minimum $VO_2$ in `L/min`)
-  5. `Total Oxygen Consumed` (`L` plus Minetti-Mars metabolic energy in `kcal` / `kJ` and average metabolic power `W`)
-  6. `xEMU O₂ & Battery Reserve` (remaining O₂ including `20%` return reserve; explicitly notes `Battery Reserve: N/A — Static Spec 20.5V 40Ah / 820 Wh`, meaning battery discharge is **not dynamically modeled**)
-- **Region 2 (Two Synchronized SVG Charts):**
-  - Left: **Coupled Walking Speed & Oxygen Flow Rate Along Path** (`O₂ Flow L/min` on left axis, `Effective Speed m/s` on right axis).
-  - Right: **Martian DEM Elevation Profile (m) Along Trajectory** (elevation curve, `Δh` ascent/descent summary, and red markers if any `NoData Gap` occurs).
-- **Region 3 (`Coupled Martian EVA Mathematical Model`):**
-  Shows the live formulas parameterized with your active speed, suit mass, and directional slope limits, plus a **`</> View LaTeX Code`** button so you can inspect or copy the raw LaTeX equations.
-
-**Tips and warnings:** If no route has been calculated yet, Analytics clearly displays `No Active Route Selected` and `N/A` placeholders rather than inventing sample numbers.
-
----
-
-## 13. Inspecting Local 3D Terrain Around a Point
-
-**Purpose:** Inspect craters, ridges, and steep escarpments around any single site on a local `40° × 40°` (~`2,366 km`) WebGL 3D relief patch without leaving the 2D Explorer.
-
-**How to use it:**
-1. Locate the **`3D TERRAIN`** (`Drag to Mars`) button with the white astronaut icon in the bottom-right corner of the 2D Explorer.
-2. Click and drag the astronaut icon over your target area on the 2D canvas—a prompt banner says *"Release astronaut to open Interactive 3D Terrain View at this location"*—and release the mouse button.
-3. Inside the **`MARS TERRAIN VIEW`** modal:
-   - **Left-drag** to orbit around the dropped astronaut marker.
-   - **Right-drag** to pan.
-   - **Scroll** to zoom in/out.
-   - Adjust vertical relief exaggeration with **`Exag: - 5x +`**.
-   - Switch surface shading modes between **`Visual`** (Viking MDIM 2.1 mosaic), **`MOLA`** (elevation colormap), and **`Slope`** (astronaut walking mobility hazard shading).
-   - Use top-right icons to **Reset Camera (`↺`)**, **Expand (`⛶`)**, or **Close (`✕`)**.
+Drag the **`3D TERRAIN`** astronaut Pegman (bottom-right of 2D Explorer) onto any location and release it to open the **`MARS TERRAIN VIEW`** WebGL modal (`40° × 40°`, ~`2,366 km` regional patch). Orbit with left-drag, pan with right-drag, adjust **`Exag: - 5x +`**, and switch between **`Visual`**, **`MOLA`**, and **`Slope`** modes.
 
 ![Local 3D Terrain View modal inspecting Jezero Crater](docs/assets/tutorial_13_local_3d_terrain.png)
-*Figure 14: The **`MARS TERRAIN VIEW`** modal opened at **Jezero Crater** (`18.41°N, 77.69°E`, `-2,476 m`), showing the `40° × 40° (~2,366 km)` WebGL block with `5x` vertical exaggeration and `Visual / MOLA / Slope` shading switches.*
+*Figure 14: **MARS TERRAIN VIEW** WebGL patch centered on Jezero Crater (`18.41°N, 77.69°E`) with `5x` vertical exaggeration.*
 
-**Expected result:** A smooth WebGL terrain block centered on your dropped astronaut pin, highlighting rim slopes and crater floor depth in perspective.
+### 13. Customizing Themes, Constraints & Settings
 
-**Tips and warnings:** Local `MARS TERRAIN VIEW` relies on hardware/browser **WebGL** acceleration; **`Exag: 5x`** intentionally stretches vertical height by 5× so Martian relief is easy to read, so do not judge visual steepness without checking **`Slope`** mode or numeric degrees.
+Click **`Settings`** in the bottom-left footer of the 2D Explorer (changes persist via `localStorage` across all pages):
 
----
-
-## 14. Customizing Themes, Constraints, and System Settings
-
-**Purpose:** Personalize the interface palette, switch between Astronaut/Rover/Scout slope limits and safety corridor widths, adjust rendering framerate, and review roadmap capabilities.
-
-**How to use it:**
-Click **`Settings`** in the bottom-left footer of the **2D Explorer** (or click **`Slope ⚙️`** inside Marswalk Planner to jump straight to Profile & Constraints). All changes take effect immediately and persist across reloads in `localStorage`.
+- **8 Settings Tabs:** `Appearance` (7 UI themes—`Cartographic Paper`, **`Rosé Pine Moon / Dusk`** default, `Studio Graphite & Muted Sage`, `USGS Cartographic Light`, `Martian Regolith`, `NASA JPL Tactical`, `Classic AI Slate`), `Maps & Offline Data`, `Navigation & Sensors`, `Profile & Constraints`, `Power & Performance` (`60 FPS` vs. `30 FPS` + `Purge Local Bitmap Cache`), `Safety & Survival`, `UI / HUD Display`, and `Future Developments` (all unimplemented roadmap items, detailed under [🚀 Future Developments](#-future-developments)).
 
 ![EVA MARSWALK System Settings — Appearance tab with 7 themes](docs/assets/tutorial_14_settings.png)
-*Figure 15: **Settings → Appearance** showing the 7 visual themes (default **`Rosé Pine Moon / Dusk ✓ ACTIVE`**) and **`Restore Default Theme`**. Changing themes restyles panels and controls cleanly without altering scientific colormaps.*
-
-### All 8 Settings Tabs Explained
-
-| Tab | What You Can Configure / Inspect |
-|---|---|
-| **`🎨 Appearance`** | Select one of 7 visual themes in exact order: `Cartographic Paper`, **`Rosé Pine Moon / Dusk`** (default), `Studio Graphite & Muted Sage`, `USGS Cartographic Light`, `Martian Regolith`, `NASA JPL Tactical`, and `Classic AI Slate`, or click **`Restore Default Theme`**. Themes never distort planetary surface imagery or scientific legends. |
-| **`🗺️ Maps & Offline Data`** | Summarizes the loaded standalone datasets (**MOLA Elevation: 72 Tiles**, **Viking MDIM 2.1: 72 Tiles 4-Tier LOD**, **Gravity Anomaly `JGMRO_120g`: 720×360**, **Terrain Slope Derived: 720×360**) and notes future HiRISE orbital sync. |
-| **`🛰️ Navigation & Sensors`** | Documents the active geodetic reference frame (**IAU 2015 Mars Equirectangular**, $R = 3{,}396{,}190.0\text{ m}$, $g = 3.721\text{ m/s}^2$, `0°–360°E` / `-90°S–+90°N`) and planned IMU / Visual Odometry hardware integration. |
-| **`👨‍🚀 Profile & Constraints`** | Choose a mobility profile (**`Astronaut EVA` `22.0°`**, **`Robotic Rover` `15.0°`**, or **`Agile Scout` `28.0°`**), customize **`Maximum Slope (θ_max)`** (`5°–35°`, step `0.5°`), and tune **`Route Safety Clearance (C)`** (`0–120,000 m`, default `30,000 m`, scanning three concentric buffers at `0.40·C`, `0.75·C`, `1.00·C`), **`Max CAUTION Density (%)`** (`5–90%`, default `35%`), and **`Max UNKNOWN Coverage (%)`** (`1–50%`, default `15%`). |
-| **`⚡ Power & Performance`** | Switch **`Rendering Performance Mode`** between **`High Performance (Target 60 FPS)`** and **`Eco-Nav Mode (Target 30 FPS Power Save)`**, or click **`Purge Local Bitmap Cache`** to free GPU/browser tile memory. |
-| **`🛡️ Safety & Survival`** | Displays fixed life-support alert references: **`Dust Storm Optical Depth (τ) Alert`** (`2.2`, read-only) and **`Oxygen Safety Return Reserve (%)`** (`20%` NASA contingency margin, read-only). |
-| **`🖥️ UI / HUD Display`** | Shows the active synchronized telemetry overlay theme name. |
-| **`🚀 Future Developments`** | Read-only **`ROADMAP`** listing 5 capabilities **not yet implemented**: (1) Regional Offline Map Package Download (`Planned`), (2) Live MRO Orbital Weather & Dust Telemetry (`Planned`), (3) Visual Odometry Landmark Tracking (`Hardware Dependent`), (4) 6-DOF IMU Inertial Navigation (`Hardware Dependent`), and (5) Phobos & Deimos Celestial Navigation (`Hardware Dependent`). |
+*Figure 15: **Settings → Appearance** displaying all 7 synchronized interface themes.*
 
 ![Settings — Profile & Constraints tab showing directional slope thresholds](docs/assets/tutorial_15_settings_profile.png)
-*Figure 16: **Settings → Profile & Constraints** displaying the active `Astronaut EVA` profile, `Maximum Slope (θ_max) = 22.0°` (`+22.00°` uphill / `-16.50°` downhill / `+8.80°` ref), and the 3-ring `Route Safety Clearance (C = 30,000 m)` corridor thresholds.*
+*Figure 16: **Settings → Profile & Constraints** configuring `Astronaut EVA (22.0°)`, `Robotic Rover (15.0°)`, or `Agile Scout (28.0°)` directional slopes and the 3-ring `Route Safety Clearance` corridor.*
 
-**Tips and warnings:** Lowering `Maximum Slope (θ_max)` (for example switching to **`Robotic Rover 15.0°`**) or increasing `Route Safety Clearance (C)` makes routes much safer around steep crater walls—but can cause previously valid paths to fail with `NO_SAFE_CORRIDOR_FOUND` in rugged highlands.
+### 14. Status Badges & Common Troubleshooting
 
----
-
-## 15. Understanding Route Statuses, Safety Colors, and Warnings
-
-Use this quick reference table whenever a route finishes (or fails) to understand what happened:
-
-| Status / Badge | Color / Meaning | What It Means & Recommended Action |
-|---|---|---|
-| **`SAFE`** / **`SAFE_ROUTE_FOUND`** | Green | All segments meet slope, corridor clearance, dust, and available MCS pressure checks. Ready to simulate in **Simulated Astronaut Walk**. |
-| **`CAUTION`** / **`CAUTION_ROUTE_FOUND`** | Muted amber/secondary | Route is passable only by crossing moderate slopes ($\theta_{\text{ref}} < \theta \le \theta_{\max}$) or moderate dust (`1.5 ≤ τ < 2.0`). Inspect `Max Directional Slope` and segment colors carefully. |
-| **`UNKNOWN`** / **`UNKNOWN_DATA_UNAVAILABLE`** | Accent highlight | Slope is physically traversable, **but** the corridor crosses coordinates without orbital MRO MCS pressure sounding coverage (or exceeds `Max UNKNOWN Coverage`). |
-| **`UNSAFE`** | Red | Route or inspected site violates hard uphill/downhill slope ($\theta > \theta_{\max}$ or $|\theta| > 0.75\,\theta_{\max}$), extreme dust ($\tau \ge 2.0$), or near-vacuum decompression (`< 150 Pa`). |
-| **`STORM_EXCLUSION`** | Red error banner | Active dust storm(s) violate optical depth ($\tau \ge 2.0$), wind ($> 100\text{ km/h}$), or the 48-hour temporal exclusion buffer over your endpoints or all detour corridors. Move/resize/clear the storm or delay mission start. |
-| **`NO_SAFE_CORRIDOR_FOUND`** / **`NO_FEASIBLE_ROUTE`** | Red error banner | No continuous path satisfies both local slope and `Route Safety Clearance (C)` tolerances. Check **`Allow CAUTION Segments (Relaxed Risk)`**, pick closer/flatter endpoints, or reduce Clearance `C` in **Settings → Profile & Constraints**. |
-| **`SEARCH_LIMIT_REACHED`** | Red error banner | Grid search expanded the maximum node budget before linking distant points. Pick closer waypoints or use **`Field D*`** / reduce clearance strictness. |
-| **`CANCELLED`** | Neutral notice | You clicked **`Cancel`** while pathfinding was running. |
-| **`⚠️ O₂ DEFICIT WARNING`** | Red warning box in Summary | The path is geometrically safe, **but** `Total O₂ Consumed` exceeds your configured `O₂ Capacity` (`480 L` default). Shorten the traverse distance, raise `O₂ Capacity`, or evaluate as a rover profile. |
-
----
-
-## 16. Troubleshooting Common Issues
-
-- **`Calculate Route` button is grayed out / disabled:**
-  Make sure **both** `Starting Point` (`Latitude` and `Longitude`) and `Destination` (`Latitude` and `Longitude`) contain valid numbers (`-90 ≤ lat ≤ 90`, `0 ≤ lon ≤ 360`) and are not empty.
-- **Map didn't load or tiles appear blank when opening `mars_2d_map.html`:**
-  Confirm you started `desktop/server.py` (or double-clicked `desktop/launch_desktop.bat` / `launch_2d_map.bat`) and are visiting `http://localhost:8080/...`, not `file:///...`. If tiles still look stale after heavy zooming, open **Settings → Power & Performance** and click **`Purge Local Bitmap Cache`**.
-- **Alert pops up when clicking `Fly To` ("Could not parse location..." or "Please enter valid latitude..."):**
-  Check that you typed **latitude first, longitude second** (e.g., `18.38, 77.58`) using **0°–360°E** east longitude rather than `deg` symbols or reversed `lon, lat` order. On **3D Globe Explorer**, enter numeric `Lat` (`-90` to `+90`) and `Lon` (`0` to `360`) into separate boxes.
-- **Route fails immediately with `STORM_EXCLUSION` after adding a Dust Storm:**
-  Check your storm radius and placement! A large storm centered near Start or Destination can swallow endpoints inside the $\tau \ge 2.0$ or 48h buffer zone. Try reducing **`Radius (R)`** or clicking **`Clear All`** in the **Dust Storm** tab to isolate terrain vs. storm effects.
-- **Where is the `Settings` button on the 3D Globe Explorer?**
-  The **Settings** modal lives on the **2D Explorer** (`mars_2d_map.html`) bottom-left footer bar. Theme selections made there apply automatically to both pages.
-- **Analytics modal shows `N/A` and "No Active Route Selected":**
-  **Analytics** reflects your live calculated route only. Close the modal, calculate any route in **Marswalk Planner**, and reopen **Analytics** (or click **`🔄 Sync Telemetry`**).
-- **3D Globe Explorer or Local `MARS TERRAIN VIEW` refuses to render:**
-  Ensure **WebGL** hardware/software acceleration is enabled in your browser (`chrome://settings` → System → *"Use graphics acceleration when available"*).
-
----
-
-## 17. Important Limitations
-
-Keep these technical and scientific boundaries in mind whenever interpreting results from **EVA MARSWALK**:
-
-1. **Not Operational NASA Flight Software:** All route clearances, Safety Indices (`0–100`), O₂ budgets, and advisories are simulation estimates. Never rely on this tool for real aerospace operations.
-2. **Global Grid Scale vs. Meter-Scale Hazards:** The bundled datasets (`Viking MDIM 2.1`, `MGS MOLA GTM090AA` 72-tile pyramids, `720×360` gravity & slope grids) represent global/regional planetary scales. Individual `1 m` boulders, small craters, soft regolith traps, and sharp overhang cliffs are invisible at planetary raster resolution and require local rover/HiRISE verification.
-3. **Modeled Atmosphere & Synthetic Dust Storms:** Outside the 1,153 bundled `MRO MCS` sounding tracks, surface pressure and ambient dust rely on `Barometric Model P(h)` and baseline constants; the **Dust Storm Engine** is a synthetic geometric hazard simulator (`MODELED`), not live Mars weather telemetry.
-4. **Static Battery Specification (`Not Modeled`):** As displayed in **Analytics → Card 6 (`xEMU O₂ & Battery Reserve`)**, the suit battery rating (`20.5V 40Ah / 820 Wh`) is informational only—EVA MARSWALK models **oxygen consumption**, not dynamic electrical battery depletion.
-5. **Point-to-Point One-Way Planning:** `Marswalk Planner` optimizes a single one-way leg (`Start → Destination`) rather than solving a combined outbound-plus-return closed loop automatically. To check return energy and uphill/downhill asymmetry manually, use **`⇅ Swap Start / Destination`** and re-run **`Calculate Route`**.
-6. **Hardware & Live Feed Features Are Roadmap Only:** Live MRO Weather APIs, Regional Offline package downloads, Visual Odometry (`ORB-SLAM3`), 6-DOF IMU inertial dead reckoning, and Phobos/Deimos celestial navigation listed under **Settings → Future Developments** are inactive roadmap descriptions requiring external hardware or network services.
-
----
-
-## 🧭 The Best Part: Marswalk Planner
-
-<p align="center">
-  <img src="docs/assets/02_marswalk_planner_route.png" alt="Marswalk Planner Interface" width="95%">
-  <br>
-  <em>Active point-to-point route planning on Mars with elevation cross-section and xEMU telemetry.</em>
-</p>
-
-The heart of EVA MARSWALK is its **Multi-Criteria Decision Analysis (MCDA)** routing engine. Given an initial departure habitat and a science destination, the planner solves a continuous multi-dimensional optimization problem:
-
-$$\text{Total Cost} = \int_{\text{Path}} \left( w_{dist} + w_{slope} \cdot P_{slope}(\theta) + w_{metabolic} \cdot C_{minetti}(\theta) + w_{storm} \cdot \tau_{storm}(x, y, t) \right) ds$$
-
-1. **Slope Safety Thresholds:** 
-   - Inclines $< 15^\circ$: Safe nominal walking zone.
-   - Inclines $15^\circ \text{ to } 25^\circ$: Hazardous zone incurring exponential cost penalties.
-   - Inclines $> 25^\circ$: Classified as lethal terrain obstacles and blocked completely.
-2. **Physiological Metabolic Minimization:** Integrates the Margaria-Minetti metabolic cost equation to calculate energetic work ($J / (kg \cdot km)$) as a function of slope incline, preventing astronaut fatigue and cooling system overcapacity.
-3. **Dynamic Elevation Cross-Section:** Instant visual feedback showing topographic elevation changes and slope gradients along every meter of the calculated traverse.
-
----
-
-## 🧠 Pathfinding Algorithms Suite
-
-EVA MARSWALK does not take algorithmic shortcuts. The system implements four genuine discrete and continuous navigation algorithms running in dedicated background Web Workers:
-
-| Algorithm | Implementation Origin | Optimality Guarantee | Advantage in Martian Terrain |
-|:---|:---|:---|:---|
-| **Field D\*** | Ferguson & Stentz (2005) | Continuous-Angle Optimal | Evaluates linear edge interpolation inside search cells; eliminates $45^\circ / 90^\circ$ grid-turn artifacts and reduces traversal distance by up to $8.24\%$. |
-| **Fast Marching Method (FMM)** | Sethian (1996) | Continuous Eikonal PDE | Solves the boundary-value first-arrival PDE $|\nabla T| = C(\mathbf{x})$, propagating true continuous wavefronts across rugged elevation fields. |
-| **D\* Lite** | Koenig & Likhachev (2002) | 8-Connected Discrete Grid | Incrementally repairs existing search trees when unexpected terrain obstacles appear, enabling ultra-fast replanning without restarting from scratch. |
-| **A\* Heuristic Search** | Hart, Nilsson & Raphael | 8-Connected Discrete Grid | Classical admissible Euclidean distance heuristic baseline for comparative performance and path verification. |
-
-<p align="center">
-  <img src="docs/assets/04_algorithm_benchmark_comparison.png" alt="Four Algorithm Benchmark Suite" width="90%">
-  <br>
-  <em>Side-by-side performance comparison across all four pathfinding engines.</em>
-</p>
+| Status / Error | Meaning & Resolution |
+|---|---|
+| **`SAFE` / `SAFE_ROUTE_FOUND`** | All segments pass slope, corridor clearance, dust, and available pressure checks |
+| **`CAUTION` / `CAUTION_ROUTE_FOUND`** | Traversable route crossing moderate slope/dust caution zones; inspect max directional slope |
+| **`UNKNOWN` / `UNKNOWN_DATA_UNAVAILABLE`** | Terrain traversable where sampled, but crosses gaps lacking MRO MCS sounding data or exceeds `Max UNKNOWN Coverage` |
+| **`STORM_EXCLUSION`** | Storm optical depth (`τ >= 2.0`), wind (`> 100 km/h`), or 48h buffer blocks endpoints or all corridors; resize/move/clear storm |
+| **`NO_SAFE_CORRIDOR_FOUND`** | No path satisfies current slope + clearance `C`; enable `Allow CAUTION Segments`, adjust `C`, or raise `θ_max` |
+| **Blank map or blocked Worker** | Launch through `desktop/server.py` (`http://localhost:8080/...`) instead of `file:///...`; verify WebGL is enabled in browser settings |
 
 ---
 
 ## 📸 Application Showcase & Screenshots
 
 <p align="center">
-  <img src="docs/assets/01_mars_2d_explorer_overview.png" alt="Mars 2D Global Explorer" width="95%">
+  <img src="docs/assets/01_mars_2d_explorer_overview.png" alt="Mars 2D Global Explorer Overview" width="95%">
   <br>
-  <em><strong>Mars 2D Global Explorer:</strong> High-performance canvas tile engine rendering Viking MDIM 2.1 color basemap and MOLA elevation contours.</em>
+  <em><strong>1. Mars 2D Global Explorer:</strong> Multi-canvas equirectangular tiler streaming the 72-tile NASA/USGS pyramid with docked locator and layer ribbon.</em>
+</p>
+
+<p align="center">
+  <img src="docs/assets/02_marswalk_planner_route.png" alt="Marswalk Planner Route" width="95%">
+  <br>
+  <em><strong>2. Marswalk Planner &amp; Telemetry:</strong> Terrain-aware continuous Field D* trajectory with elevation cross-section, slope validation, and O₂ demand.</em>
 </p>
 
 <p align="center">
   <img src="docs/assets/03_dust_storm_avoidance_detour.png" alt="Dust Storm Avoidance Detour" width="95%">
   <br>
-  <em><strong>Dynamic Dust Storm Avoidance:</strong> An expanding Gaussian storm cell intersects the route; the planner autonomously replans a safe green detour.</em>
+  <em><strong>3. Dynamic Dust Storm Detour:</strong> Moving Gaussian storm hazard (`τ >= 2.0` core) triggering autonomous avoidance routing.</em>
 </p>
 
 <p align="center">
-  <img src="docs/assets/05_mars_3d_globe_cesium.png" alt="CesiumJS 3D Mars Globe" width="95%">
+  <img src="docs/assets/04_algorithm_benchmark_comparison.png" alt="Four-Algorithm Benchmark Comparison" width="95%">
   <br>
-  <em><strong>CesiumJS 3D Mars Globe:</strong> True planetary WebGL ellipsoid with spherical harmonic gravity anomaly overlay.</em>
+  <em><strong>4. Four-Algorithm Benchmark Suite:</strong> Live Web Worker comparison across Field D*, D* Lite, FMM, and Baseline A*.</em>
 </p>
 
 <p align="center">
-  <img src="docs/assets/06_local_3d_terrain_view.png" alt="Local 3D Terrain Relief" width="95%">
+  <img src="docs/assets/05_mars_3d_globe_cesium.png" alt="Interactive WebGL 3D Mars Globe" width="95%">
   <br>
-  <em><strong>Local 3D Terrain View:</strong> High-resolution surface elevation mesh reconstructed directly from MOLA laser altimetry.</em>
+  <em><strong>5. Interactive WebGL 3D Mars Globe:</strong> Custom WebGL sphere shader projecting topographic relief, landmarks, MRO MCS tracks, and live survival telemetry.</em>
 </p>
 
 <p align="center">
-  <img src="docs/assets/07_astronaut_simulation_telemetry.png" alt="Astronaut Simulation Telemetry" width="95%">
+  <img src="docs/assets/06_local_3d_terrain_view.png" alt="Local 3D Terrain View" width="95%">
   <br>
-  <em><strong>Astronaut Movement Simulation:</strong> Life-support telemetry monitoring battery, oxygen, and metabolic burn.</em>
+  <em><strong>6. Local 3D Terrain View:</strong> Interactive 40° × 40° (`97 × 97` vertex) WebGL relief patch reconstructed from MOLA elevation data.</em>
+</p>
+
+<p align="center">
+  <img src="docs/assets/07_astronaut_simulation_telemetry.png" alt="Astronaut Movement Simulation Telemetry" width="95%">
+  <br>
+  <em><strong>7. Astronaut Walk Simulation:</strong> Animated traversal playback monitoring speed transitions, oxygen flow, and local hazard status.</em>
 </p>
 
 ---
 
 ## 🚀 Quick Start & Installation
 
-EVA MARSWALK is an ultra-lightweight client-side Single Page Application (SPA). It requires **zero compilation**, **zero build tools**, and **zero database installation**.
-You may experience it right on the Website: [EVA MARSWALK](https://sm9038.github.io/EVA-MARSWALK/)
+EVA MARSWALK runs directly from static web files with zero compilation steps, build toolchains, or external databases.
 
+- **Try Online Immediately:** [https://sm9038.github.io/Extravehicular-Activity-EVA-/](https://sm9038.github.io/Extravehicular-Activity-EVA-/)
 
 ### Prerequisites
-- Any modern web browser supporting **WebGL 2.0** and **Web Workers** (Google Chrome, Microsoft Edge, Mozilla Firefox, or Apple Safari).
-- **Python 3.8+** (Required solely to run the local file-streaming server, preventing browser CORS restrictions).
+- Modern browser supporting **HTML5 Canvas**, **WebGL**, and **ES6 Module Web Workers** (Chrome, Edge, Firefox, or Safari).
+- **Python 3.8+** (for running the local HTTP file server so `fetch()`, manifests, and module Web Workers work without `file://` CORS blocks).
 
----
+### Option 1: Windows One-Click Launchers
+1. Double-click `desktop\launch_2d_map.bat` to open **2D Mars Explorer & Marswalk Planner** (`mars_2d_map.html`), **or**
+2. Double-click `desktop\launch_desktop.bat` to open the **Mission Control Portal** (`index.html`).
 
-### Method 1: Windows One-Click Launchers (Recommended)
-
-If you are running Windows, simply double-click either batch script in the `desktop/` directory:
-
-1. **To launch the 2D Mars Explorer & Marswalk Planner (Flagship):**  
-   Double-click `desktop\launch_2d_map.bat`
-2. **To launch the 3D Interactive Cesium Mars Globe:**  
-   Double-click `desktop\launch_desktop.bat`
-
-*The script automatically binds to `http://localhost:8080` (or increments if occupied) and launches your default browser.*
-
----
-
-### Method 2: Cross-Platform Terminal (Windows, macOS, Linux)
-
-Clone the repository and start the built-in streaming server:
+### Option 2: Cross-Platform Terminal (Recommended Locally)
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/[YOUR-ORG]/nasa_mars_explorer.git
-cd nasa_mars_explorer
+# 1. Clone the official repository
+git clone https://github.com/SM9038/Extravehicular-Activity-EVA-.git
+cd Extravehicular-Activity-EVA-
 
-# 2. Launch the 2D Marswalk Planner
+# 2. Launch the 2D Mars Explorer & Planner on http://localhost:8080
 python desktop/server.py mars_2d_map.html
+
+# Or launch the Mission Portal / 3D Mars Globe:
+# python desktop/server.py index.html
+# python desktop/server.py mars_3d_map.html
 ```
 
-*(To launch the 3D Cesium Globe instead, pass `mars_3d_map.html`: `python desktop/server.py mars_3d_map.html`)*.
-
----
-
-### Method 3: Standard Python HTTP Fallback
-
-If you prefer using Python's standard library directly without launcher scripts:
+### Option 3: Python Built-In HTTP Server Fallback
 
 ```bash
-cd nasa_mars_explorer
+cd Extravehicular-Activity-EVA-
 python -m http.server 8080
 ```
-Then open your browser and navigate to:
-- **2D Planner:** `http://localhost:8080/mars_2d_map.html`
-- **3D Globe:** `http://localhost:8080/mars_3d_map.html`
 
-> **CORS Security Note:** Modern web browsers block Web Workers and binary raster streams when opening HTML files via `file:///` URLs. Always launch EVA MARSWALK through a local HTTP server as documented above.
+Then open `http://localhost:8080/index.html`, `http://localhost:8080/mars_2d_map.html`, or `http://localhost:8080/mars_3d_map.html`.
 
----
-
-## 🎮 Interactive Traversal Workflow
-
-1. **Explore & Toggle Science Layers:** Pan and zoom across the 72-tile Viking basemap. Open the layer drawer in the top-right to toggle MOLA elevation relief, slope heatmaps, or gravity anomaly layers.
-2. **Fly to a Landmark:** Open the **Landmarks** dropdown to jump directly to iconic sites like *Jezero Crater* (Perseverance landing site), *Gale Crater* (Curiosity), or *Olympus Mons*.
-3. **Set EVA Waypoints:** Click on the map to place your **Start Location** (Habitat / Rover Base), then click a second location to set your **Goal Location** (Exploration Target).
-4. **Select Optimization Algorithm:** In the **Marswalk Planner** panel, select **Field D\*** for smooth natural trajectories, or **Fast Marching** for continuous PDE wavefronts.
-5. **Configure Suit & Crew Parameters:** Open **EVA Settings** to adjust walking speed ($0.8 \dots 1.5\text{ m/s}$) or suit base power load ($80 \dots 250\text{ W}$).
-6. **Plan Route & Review Telemetry:** Click **Plan Marswalk**. The background worker calculates the route in milliseconds, rendering the elevation cross-section, total distance, walking time, and consumable feasibility.
-7. **Simulate Dust Storm Hazard:** Spawn a moving dust storm cell to watch the planner dynamically calculate a real-time detour around the storm corridor.
-8. **Animate Movement & Inspect 3D Relief:** Press **Play** to animate the suited astronaut traversing the route with live HUD updates. Click **3D Terrain** to inspect localized elevation relief.
+> [!WARNING]
+> **Always use `http://localhost:...` rather than `file:///...`.** Browsers block module Web Workers (`geospatial/route_worker.js`) and `fetch()` calls to local JSON manifests over `file://` URLs.
 
 ---
 
 ## 🔬 Scientific Data & Methodology
 
-EVA MARSWALK is built upon verified planetary science datasets from NASA and USGS planetary archives:
+### Authoritative Datasets & Engineering Sources (`data/`)
 
-```
-+-------------------------------------------------------------------------------------------------------------------------+
-|                                           PRIMARY SCIENTIFIC DATASETS TABLE                                             |
-+---------------------+-------------------------+--------------------+------------------+---------------------------------+
-| Dataset Layer       | Scientific Provider     | File Format        | Resolution       | Active Role in Application      |
-+---------------------+-------------------------+--------------------+------------------+---------------------------------+
-| **MOLA MEGDR DEM**  | NASA PDS Geosciences    | 16-bit GeoTIFF     | 128 ppd (463 m)  | Topographic elevation & slope   |
-| **Viking MDIM 2.1** | USGS Astrogeology / PDS | JPEG Tile Pyramid  | 256 ppd (232 m)  | Global 2D & 3D visual basemap   |
-| **MRO120G Gravity** | NASA PDS / GSFC         | ASCII / Binary BIN | Degree/Order 120 | Free-air gravity anomaly layer  |
-| **NASA xEMU Specs** | NASA / ICES Technical   | PDF Specification  | Engineering Unit | Astronaut consumables & safety  |
-| **IAU Gazetteer**   | IAU WGPSN / USGS        | Structured JSON    | Point Coordinates| 42 Named geological landmarks   |
-+---------------------+-------------------------+--------------------+------------------+---------------------------------+
-```
+| Dataset / Source Group | Scientific Provider / Provenance | Bundled Representation & Scale | Measured Coverage / Range | Active Role in Application |
+|---|---|---|---|---|
+| **MOLA MEGDR DEM (`GTM090AA`)** | NASA MGS / USGS Astrogeology | 72-tile pyramid (`6 × 12`, `30° × 30°`) + `720 × 360` raster (`0.5°/px`) | `-8,201.0 m` to `+21,241.0 m` (mean `-720.53 m`); slope `0.0°` to `14.78°` on coarse grid | Topographic elevation, directional slope cost, Local 3D block & 3D Globe relief |
+| **Viking MDIM 2.1 Color Mosaic** | USGS Astrogeology / NASA PDS | `72` valid multi-tier LOD tiles (`512×512` winner vs. `256×256` benchmark) | `100.0%` spherical coverage (`2.577 GB` source, `144,371,390.88 km²`) | Global 2D visual basemap and Visual mode texture in `terrain_view_3d.js` |
+| **MRO120G / 120F Gravity Field** | NASA PDS Geosciences / GSFC (`Genova et al., 2016`) | `720 × 360` spherical harmonic synthesis grids (`degree/order 120`) | Free-air `-870.12` to `+3,470.15 mGal`; `g` `3.7049–3.7483 m/s²`; `N` `-6,661.7` to `+4,923.0 m`; `Δg` `-208.3` to `+125.7 mGal` | `gravity_120g`, `surface_g`, `geoid_n`, and `gravity_delta` scientific overlays & site dossiers |
+| **MRO MCS Soundings (`2025073120_DDR`)** | NASA MRO Mars Climate Sounder (`MRO-M-MCS-5-DDR-V6.2`) | `pds_pressure_mcs.json` (`615` `p_surf` soundings) + `mcs_soundings.json` / `mcs_tracks_summary.json` (`1,153` track records) | Surface pressure `271.32–781.33 Pa` (mean `450.07 Pa` across `615` `p_surf` records) | 3D Globe orbital ground tracks (`1,153`) & route MCS pressure verification |
+| **NASA xEMU / EVA Engineering Specs** | NASA ICES / xEVAS Guidelines | Parameterized biomechanical & life-support envelope in JS configs | Default `M_tot = 145.0 kg` (`80 + 15 + 50 kg xEMU`), `O₂`: `480 L` UI / `1,200 L` engine fallback, `20%` reserve | Metabolic locomotion work, O₂ consumption, `820 Wh` static ref label, SWME pressure limits |
+| **IAU/USGS Gazetteer & Landmarks** | IAU WGPSN / USGS | `mars_gazetteer.js`, `survivability.js`, `mars_3d_map.html`, 2D preset menu | `27` Gazetteer entries, `19` `MARS_LANDMARKS`, `18` 2D quick presets, `13` 3D pins | Instant `Fly To` navigation, planner endpoint autocomplete, and globe markers |
 
-### Physical & Mathematical Formulations
+### Verified Physical & Mathematical Formulations
 
-- **Margaria-Minetti Metabolic Locomotion:** Evaluates human energy expenditure across slopes:
-  $$C(i) = 280.5 i^5 - 58.7 i^4 - 287.8 i^3 + 63.7 i^2 + 103.1 i + 54.0 \quad [\text{J/(kg}\cdot\text{km)}]$$
-  scaled to Martian gravity ($g_{mars} = 3.72\text{ m/s}^2$) for a total suited crew mass of $M_{total} = 220\text{ kg}$.
-- **Hydrostatic Atmospheric Pressure:** Modeled via isothermal barometric balance:
-  $$P(h) = P_0 \exp\left(-\frac{h}{H_s}\right), \quad H_s = \frac{k_B T}{M_{CO2} g_{mars}} = 10,693.705\text{ m}$$
-  where $P_0 = 610.0\text{ Pa}$ and effective temperature $T = 210.0\text{ K}$.
-- **xEMU Life Support Consumables:** Calibrated against official NASA ICES engineering specifications:
-  - Battery capacity: $40.0\text{ Ah}$ @ $20.5\text{ V}$ ($820\text{ Wh}$ nominal).
-  - Primary Oxygen: $1.20\text{ kg}$ $O_2$ ($8.0\text{ hr}$ nominal duration).
-  - Thermal rejection: Spacesuit Water Membrane Evaporator (SWME) ceiling of $1,200\text{ W}$.
+#### 1. Directional Slope Envelope & Coupled Walking Speed ([`terrain_cost_evaluator.js`](geospatial/terrain_cost_evaluator.js), [`field_d_star.js`](geospatial/field_d_star.js))
+For each segment gradient angle $\theta_k = \arctan\!\left((z_v - z_u) / \Delta s_k\right) \cdot \frac{180^\circ}{\pi}$:
+- **Asymmetric Safety Limits:** Default **Astronaut EVA** enforces $\theta_{\max,\text{up}} = +22.0^\circ$, $\theta_{\max,\text{down}} = -0.75\,\theta_{\max} = -16.5^\circ$ (to mitigate center-of-gravity tipping under a pressurized backpack), and nominal reference $\theta_{\text{ref}} = 0.40\,\theta_{\max} = 8.8^\circ$. Presets adjust $\theta_{\max}$ to `15.0°` (`Robotic Rover`) or `28.0°` (`Agile Scout`), while `survivability.js` flags fixed site inspection at `8°` nominal / `20°` walking limit.
+- **Dust- & Slope-Coupled Speed:**
+  $$v_{\text{eff}}(\theta_k, \tau_k) = \frac{v_0}{\sqrt{K(\theta_k)} \cdot (1 + 0.10\,\tau_k)} \quad [\text{m/s}]$$
+
+#### 2. Mars-Scaled Minetti Metabolic Cost (`terrain_cost_evaluator.js` & `eva_analytics.js`)
+With gradient $i = \operatorname{clamp}(\Delta z / \Delta s, -0.6, +0.6)$, default total suited mass $M_{\text{tot}} = 145.0\text{ kg}$ (`80 kg` body + `15 kg` equipment + `50 kg` xEMU; fallback `135.0 kg` when mass arguments are omitted), $g_{\text{Mars}} = 3.721\text{ m/s}^2$, and $g_{\text{Earth}} = 9.80665\text{ m/s}^2$:
+
+$$C_W(i) = 280.5\,i^5 - 58.7\,i^4 - 218.4\,i^3 + 43.3\,i^2 + 9.6\,i + 1.88 \quad [\text{J/(kg}\cdot\text{m)}]$$
+
+$$C_{\text{Mars}}(i) = \max\!\left(1.1,\; C_W(i)\cdot\left(0.38 + 0.62\,\frac{g_{\text{Mars}}}{g_{\text{Earth}}}\right)\right) \quad [\text{J/(kg}\cdot\text{m)}]$$
+
+$$E_k = C_{\text{Mars}}(i_k)\cdot M_{\text{tot}}\cdot \Delta s_k \quad [\text{J}], \qquad P_{\text{met},k} = \frac{E_k}{\Delta t_{\text{eff},k}} \quad [\text{W}]$$
+
+#### 3. Oxygen Consumption & Return Reserve (`terrain_cost_evaluator.js`)
+
+$$\Phi_v(v_0) = 0.65 + 0.35\left(\frac{v_0}{1.2}\right)^{0.85}$$
+
+$$\dot{V}_{\text{O}_2,k} = 2.80 \cdot \left(1.0 + 3.6\,i_{\text{up},k} + 0.8\,i_{\text{down},k} + 0.002\,\max(0, M_{\text{tot}} - 110)\frac{g_{\text{Mars}}}{g_{\text{Earth}}}\right) \cdot \Phi_v(v_0) \quad [\text{L/min}]$$
+
+A route checks both non-negative remaining oxygen (`>= 0 L`) and flags a caution warning when remaining O₂ falls below the **`20%` return reserve**.
+
+#### 4. Hydrostatic Atmospheric Pressure & Gravity Conventions
+- **Isothermal Barometric Estimate ([`atmospheric_pressure.js`](geospatial/atmospheric_pressure.js)):** Explicitly tagged `MODELED_ESTIMATE` with $P_0 = 610.0\text{ Pa}$ at $h_0 = 0.0\text{ m}$, $T = 210.0\text{ K}$, $M_{\text{CO}_2} = 0.04401\text{ kg/mol}$, $g = 3.71\text{ m/s}^2$, $R = 8.314462618\text{ J/(mol}\cdot\text{K)}$:
+  $$P(h) = P_0 \exp\!\left(-\frac{M_{\text{CO}_2}\,g\,(h - h_0)}{R\,T}\right) = P_0 \exp\!\left(-\frac{h - h_0}{H}\right), \quad H = \frac{R\,T}{M_{\text{CO}_2}\,g} \approx 10{,}693.7\text{ m}$$
+- **Three Gravity Reference Conventions:** Locomotion/geodesy uses **$g_{\text{Mars}} = 3.721\text{ m/s}^2$** (`terrain_cost_evaluator.js`, `eva_analytics.js`), hydrostatic atmospheric scale height uses IAU **$3.71\text{ m/s}^2$** (`atmospheric_pressure.js`), and spatial `MRO120G` surface gravity computes local **$g = 3.713606 + \Delta g \times 10^{-5}\text{ m/s}^2$** (`coordinates.js`, `survivability.js`, `mars_3d_map.html`).
+
+#### 5. Dynamic Storm Exclusion & Radiation Proxy ([`dust_storm_simulator.js`](geospatial/dust_storm_simulator.js), `survivability.js`)
+- **Gaussian Optical Depth & Wind Decay:** $\tau(d, t) = \tau_{\text{base}} + \Delta\tau_{\max} I(t)\exp(-(d/R)^2)$ (`tau >= 2.0` prohibited; `1.5–2.0` Caution) and $v(d, t) = v_{\text{base}} + \Delta v_{\max} I(t)\max(0, 1 - d/R)$ (`> 100 km/h` prohibited; `40–100 km/h` Caution), enforced with a **`48 h` temporal separation window** on geodesic distance ($R_{\text{Mars}} = 3{,}396.19\text{ km}$).
+- **Radiation Column Proxy:** $\dot{D}_{\text{rad}}(h) = 0.50 + 0.35\,[1 - \operatorname{clamp}((P(h) - 100.0)/1150.0, 0, 1)]\ \text{mSv/day}$ (used in Astronaut Monitoring & Analytics; not an active pathfinding blocker).
 
 ---
 
-## 🛠️ Tech Stack & System Architecture
-
-EVA MARSWALK utilizes a decoupled client-server architecture built entirely on open web standards:
+## 🛠️ Tech Stack & Verified System Architecture
 
 ```mermaid
 flowchart TD
-    subgraph HostServer ["Local Streaming Host"]
-        PY_SRV["desktop/server.py (ThreadingHTTPServer:8080)"]
+    subgraph Server["Local Static Host (desktop/)"]
+        PySrv["desktop/server.py (ThreadingHTTPServer :8080)"]
     end
 
-    subgraph BrowserUI ["Browser Client (Main UI Thread)"]
-        HTML2D["mars_2d_map.html (2D Explorer & Planner)"]
-        HTML3D["mars_3d_map.html (3D Cesium Globe)"]
-        UI_DISPATCH["UI Event Controller"]
-        CANVAS_REN["Leaflet Canvas & Equirectangular Tiler"]
-        CESIUM_REN["CesiumJS WebGL 3D Globe"]
+    subgraph Frontend["Browser UI Thread (Zero External JS Frameworks)"]
+        Portal["index.html (Mission Portal)"]
+        UI2D["mars_2d_map.html (2D Workspace & Planner)"]
+        UI3D["mars_3d_map.html (Custom WebGL 3D Globe)"]
+        Canvas2D["geospatial/equirectangular_map.js (4-Canvas 72-Tile Engine)"]
+        View3D["geospatial/terrain_view_3d.js (Local WebGL 97x97 Heightfield)"]
+        Analytics["geospatial/eva_analytics.js (KPIs, SVG Plots, LaTeX)"]
+        Settings["geospatial/eva_settings.js (7 Themes, Constraints, ENG/VIE)"]
     end
 
-    subgraph WebWorkerEngine ["Background Concurrency (Web Worker)"]
-        WORKER["geospatial/pathfinding_worker.js"]
-        FDSTAR["Field D* (Ferguson & Stentz)"]
-        FMM["Fast Marching Method (Sethian)"]
-        DSLITE["D* Lite (Koenig & Likhachev)"]
-        ASTAR["A* Heuristic Search"]
-        MCDA["Multi-Criteria Cost Evaluator"]
+    subgraph Worker["Web Worker Thread (geospatial/route_worker.js)"]
+        FDStar["geospatial/field_d_star.js (Field D*, D* Lite, FMM, A*)"]
+        Cost["geospatial/terrain_cost_evaluator.js (Minetti & Slope Evaluator)"]
+        Storm["geospatial/dust_storm_simulator.js (Spatiotemporal Hazard Engine)"]
+        Surv["geospatial/survivability.js (Strict Severity Bottleneck)"]
     end
 
-    subgraph PlanetaryData ["Local Planetary Storage (data/)"]
-        TILES["data/processed/main_pyramids/ (72 Viking tiles)"]
-        DEMS["data/processed/pyramids/ (MOLA 128 ppd DEMs)"]
-        GRAV["data/gravity_120g.bin (MRO Gravity)"]
-        GAZ["geospatial/mars_gazetteer.js (42 Landmarks)"]
+    subgraph Data["Static Planetary Data (data/ & geospatial/)"]
+        Pyramids["72-Tile Viking & MOLA LOD Pyramids"]
+        Bins["720x360 Binary Elevation, Slope & MRO120G/120F Grids"]
+        MCS["MRO MCS Sounding JSONs (615 p_surf / 1,153 Tracks)"]
+        Gaz["geospatial/mars_gazetteer.js (27 Named Features)"]
     end
 
-    PY_SRV -->|Streams static assets & tile pyramids| BrowserUI
-
-    HTML2D --> UI_DISPATCH
-    HTML3D --> UI_DISPATCH
-
-    UI_DISPATCH -->|postMessage: compute route| WORKER
-    WORKER --> FDSTAR
-    WORKER --> FMM
-    WORKER --> DSLITE
-    WORKER --> ASTAR
-    WORKER --> MCDA
-
-    WORKER -->|postMessage: optimal trajectory & telemetry| UI_DISPATCH
-    UI_DISPATCH --> CANVAS_REN
-    UI_DISPATCH --> CESIUM_REN
-
-    PlanetaryData -->|HTTP tile requests| BrowserUI
-    PlanetaryData -->|Local elevation grids| WORKER
+    PySrv -->|HTTP asset streaming| Frontend
+    UI2D --> Canvas2D
+    UI2D --> View3D
+    UI2D --> Analytics
+    UI2D --> Settings
+    UI2D -->|postMessage route request| Worker
+    Worker --> FDStar
+    FDStar --> Cost
+    FDStar --> Storm
+    FDStar --> Surv
+    Worker -->|postMessage route & telemetry| UI2D
+    Data -->|Fetch manifests, tiles & rasters| Frontend
+    Data -->|Load binary grids| Worker
 ```
 
-- **Frontend:** Pure Vanilla JavaScript (ES6+), HTML5, CSS3. Zero frameworks.
-- **3D Geospatial Engine:** CesiumJS (WebGL 2.0 planetary rendering).
-- **2D Mapping Engine:** Leaflet.js with custom Equirectangular canvas tiling.
-- **Multithreading:** HTML5 Web Workers (`pathfinding_worker.js`).
-- **Local Application Server:** Python 3 Standard Library (`http.server.ThreadingHTTPServer`).
-- **Database:** None (Static file-based planetary pyramid streaming).
+- **Frontend:** Vanilla ES6+ JavaScript, HTML5, CSS3 custom variable theming system (7 synchronized themes across `index.html`, `mars_2d_map.html`, `mars_3d_map.html`).
+- **2D & 3D Graphics:** Custom 4-canvas 2D tiler (`equirectangular_map.js`) + custom raw WebGL shaders (`mars_3d_map.html` sphere & `terrain_view_3d.js` regional block), built directly on native browser Canvas and WebGL APIs.
+- **Concurrency:** Module Web Worker (`geospatial/route_worker.js`) preventing UI blocking during multi-hundred-thousand-node terrain searches.
+- **Local Server:** Python 3 `http.server.ThreadingHTTPServer` (`desktop/server.py`) + Windows `.bat` wrappers; no backend database required.
 
 ---
 
 ## ⚠️ Scientific Limitations & Disclaimers
 
-> **Important Operational Disclaimer:**  
-> EVA MARSWALK is an academic research prototype and educational software developed by undergraduate students for the NASA Space Apps Challenge 2026. It is **not** certified for real-world spaceflight operations, active extraterrestrial surface missions, or mission-critical life-support management.
->
-> While topographic elevation data is derived from authentic NASA MGS MOLA observations and suit parameters mirror published NASA xEMU engineering guidelines, certain environmental models (such as the isothermal barometric formula and dynamic Gaussian dust storm fields) represent first-order engineering approximations.
+1. **Academic & Simulation Scope Only:** EVA MARSWALK is an undergraduate competition prototype, not operational aerospace or flight-planning software.
+2. **Global Grid Resolution vs. Meter-Scale Hazards:** Global `720 × 360` routing grids (`0.5°/px`, ~`30 km` equator cell spacing) and planetary DEM tiles resolve macro-topography (volcanic shields, chasm walls, large crater rims), not meter-scale boulders, soft regolith drifts, or sharp overhang hazards that require HiRISE/rover verification.
+3. **Modeled Environmental Approximations:** Ambient pressure outside MCS tracks uses an isothermal hydrostatic scale height (`210 K`, omitting seasonal CO₂ frost condensation cycles and tropospheric lapse rates); ambient temperature and GCR attenuation use latitude/pressure proxies; dust storms are synthetic Gaussian hazard fields (`MODELED`).
+4. **Static Battery Specification (`Not Modeled`):** PLSS battery labels (`20.5 V × 40 Ah / 820 Wh`) and `8.0 h` limits are static reference specifications; avionics/fan/heater electrical discharge is not simulated.
+5. **Single-Leg Point-to-Point Optimization:** `Marswalk Planner` optimizes one leg (`Start → Destination`) per run rather than coupled outbound-plus-return closed loops; use **`⇅ Swap Start / Destination`** to evaluate return-leg asymmetry.
 
 ---
 
-## 🚀 Future Development
+## 🚀 Future Developments
 
-EVA MARSWALK is envisioned as an expandable platform for future astronaut navigation, autonomous exploration, and scientific research on Mars. The following concepts represent potential future extensions of the project. They are conceptual proposals and are not yet implemented unless explicitly stated otherwise.
+The following capabilities represent planned software integrations and conceptual mission-planning extensions—none are currently implemented as active hardware/orbital interfaces:
 
-### 🪟 Helmet-Mounted Holographic Visor Navigation Arrow
-A conceptual Heads-Up Display (HUD) that projects an augmented-reality navigation arrow onto an astronaut's helmet visor. It would provide real-time route guidance, waypoint directions, and slope hazard alerts directly within the astronaut's field of view.
+### In-App Hardware & Orbital Integration Roadmap (`Settings → Future Developments`)
 
-### ⛅ Non-Isothermal Atmospheric Model
-An enhanced Martian atmospheric model incorporating seasonal solar longitude (\(L_s\))-dependent pressure oscillations and altitude-dependent tropospheric temperature lapse rates, particularly for high-elevation regions such as Olympus Mons.
+| Capability | Classification | Technical Prerequisite |
+|---|---|---|
+| **1. Regional Offline Map Package Download** | `Planned` | IndexedDB multi-gigabyte blob chunking and client-side package extraction |
+| **2. Live MRO Orbital Weather & Dust Telemetry** | `Planned` | NASA PDS open-access feed integration and planetary ephemeris relay |
+| **3. Visual Odometry (VO) Landmark Tracking** | `Hardware Dependent` | Stereo suit/rover optical camera stream and real-time ORB-SLAM3 tracking |
+| **4. 6-DOF IMU Inertial Navigation & Dead Reckoning** | `Hardware Dependent` | Tri-axial accelerometer and fiber-optic gyroscope hardware telemetry |
+| **5. Celestial Navigation (Phobos & Deimos Triangulation)** | `Hardware Dependent` | Zenith-pointing star tracker optics and celestial ephemeris solver |
+| **6. Physical Battery & Solar Array Consumption Controller** | `Hardware Dependent` | CAN-bus telemetry link to physical rover/PLSS power distribution units |
+| **7. Subterranean Lava Tube Shelter Autonomous Routing** | `Scientific Data` | Validated ground-penetrating radar (`SHARAD` / `RIMFAX`) void database |
+| **8. Real-Time Physiological Oxygen Sensor Integration** | `Hardware Dependent` | Biometric BLE pulse oximetry and suit pressure sensor streams |
+| **9. Augmented Reality (AR) Visor Navigation HUD** | `Hardware Dependent` | WebXR-compatible optical waveguide helmet visor projection display |
 
-### 🥽 WebXR & VR Traversal Mode
-An immersive first-person Martian surface exploration experience using WebXR-compatible browsers and virtual reality headsets. Users could virtually traverse terrain, inspect elevation changes, and experience planned astronaut routes.
+### Conceptual Exploration Extensions
+- **Non-Isothermal Atmospheric Model:** Seasonal solar longitude ($L_s$)-dependent CO₂ pressure oscillation and tropospheric temperature lapse rates.
+- **Base Management, O₂ Resupply & Multi-Site Loop Planning:** Joint outbound-plus-return reachability checks, intermediate habitat/resupply nodes, and automatic contingency return recommendations.
+- **Research-Priority & Equatorial Corridor Analysis:** Mineral/astrobiology science weighting and regional equatorial mobility corridor mapping.
+- **WebXR & Multi-Agent Suit-Rover Cooperation:** Immersive VR terrain walkthroughs and coordinated human–robot traverse planning.
 
-### 🤖 Autonomous Mars Rover & Vehicle Integration
-Integration with autonomous Mars rovers and robotic exploration vehicles to support coordinated human–robot exploration, remote navigation, terrain assessment, and shared mission planning.
-
-### 🔬 Research-Oriented Route Optimization
-Mission-specific route planning for scientific exploration, prioritizing potential mineral deposits, subsurface or surface water resources, and regions of astrobiological interest, including potential microbial habitats and biosignatures.
-
-### 🏠 Base Management & Return-to-Base Planning
-The ability to establish and manage astronaut bases or habitats as mission reference points. Route planning would account for the return journey, ensuring that astronauts can evaluate whether a destination is reachable while maintaining a feasible return path to their designated base.
-
-### 🗺️ Multi-Research-Site Route Planning
-A multi-destination planning system that generates efficient and risk-aware routes between multiple scientific research sites and geological landmarks. It would optimize visiting order while considering terrain hazards, travel distance, mission objectives, and the return journey.
-
-### 🫧 Oxygen Resupply Stations
-Virtual placement and management of oxygen resupply stations along extended exploration routes. The system would evaluate oxygen consumption, remaining reserves, station locations, and resupply opportunities to support longer-duration surface missions.
-
-### ↩️ Automatic Return Route Recommendation
-An intelligent return-planning mechanism that monitors mission conditions and recommends a route back to the nearest designated base or resupply location when necessary, considering remaining oxygen, astronaut condition, environmental hazards, and available travel time.
-
-### 🛣️ Equatorial Navigation Corridor — Mars Highway Concept
-A proposed large-scale navigation corridor near the Martian equator, connecting multiple geological landmarks and potential exploration sites through relatively accessible terrain.
-
-Rather than assuming that the entire equatorial region is flat or inherently safe, this concept would identify suitable corridors through large-scale elevation analysis, slope assessment, and environmental hazard evaluation. It could eventually serve as a reference network for navigation, regional exploration, and understanding Martian surface conditions.
-
-### 🔭 Advanced Autonomous Exploration & Mission Systems
-Future integration with intelligent mission-planning systems to support autonomous navigation, dynamic route adaptation, environmental monitoring, and coordination between astronauts, rovers, and exploration infrastructure.
 ---
 
 ## 👥 Team & Acknowledgments
 
 ### Team AI-Powered
-Undergraduate students from the **Ho Chi Minh University of Science (VNU-HCM), Vietnam**:
-- Project Architecture, Geospatial Algorithms & Full-Stack Development: *Team AI-Powered*
-- Developed for: **NASA Space Apps Challenge 2026**
+Undergraduate students from the **Ho Chi Minh University of Science (VNU-HCM), Vietnam** — *NASA Space Apps Challenge 2026*:
+- Project Architecture, Geospatial Pathfinding & Full-Stack Engineering: **Team AI-Powered**
 
-### Scientific Data Acknowledgments
-We express our sincere gratitude to the planetary scientists, engineers, and mission teams behind:
-- **NASA Planetary Data System (PDS) Geosciences Node**
-- **NASA Goddard Space Flight Center (MRO Gravity Model Team)**
-- **NASA Extravehicular Activity Services (xEVAS / xEMU) Engineering Teams**  
-Three data above are all stored in this [Drive](https://drive.google.com/drive/folders/1zfp6GEJgST5CYAE4ZpghkgAJ7kfVaqGo?usp=drive_link), noted that there is a link to real sources in PDF files.
-- [**NASA Mars Global Surveyor (MGS) MOLA Team**](https://astrogeology.usgs.gov/search/map/mars_mgs_mola_dem_463m)
-- [**USGS Astrogeology Science Center (Viking MDIM 2.1)**](https://astrogeology.usgs.gov/search/map/mars_viking_colorized_global_mosaic_232m)  
-- [The Formulas we used]()
+### Scientific Data & Technical Acknowledgments
+- **NASA Planetary Data System (PDS) Geosciences Node** — `MGS MOLA` & `MRO MCS` planetary data archives
+- **NASA Goddard Space Flight Center Planetary Geodesy Team** — `MRO120G / 120F` spherical harmonic gravity solutions
+- **NASA xEMU / xEVAS Engineering Documentation** — suit mass, SWME pressure envelope, and O₂ reference guidelines  
+  *(Reference archives collected in this [shared Drive folder](https://drive.google.com/drive/folders/1zfp6GEJgST5CYAE4ZpghkgAJ7kfVaqGo?usp=drive_link), with source PDFs linking back to official releases.)*
+- [**NASA Mars Global Surveyor (MGS) MOLA DEM (`463 m`)**](https://astrogeology.usgs.gov/search/map/mars_mgs_mola_dem_463m)
+- [**USGS Astrogeology Science Center — Viking MDIM 2.1 Colorized Mosaic (`232 m`)**](https://astrogeology.usgs.gov/search/map/mars_viking_colorized_global_mosaic_232m)
+- [Coupled Physical & Mathematical Formulations](#-scientific-data--methodology)
+
+### Use of Artificial Intelligence (AI) Disclosure
+AI coding and writing tools were used to assist with software engineering productivity and technical documentation drafting/editing. All scientific equations, codebase references, numerical constants, and architectural descriptions presented in this repository were audited directly against the implemented source code and bundled datasets.
 
 ---
 
 ## 📄 License & Open-Source Policy
 
-*(Owner Decision Pending)*  
-This repository is currently prepared for open-source publication under the **MIT License**.  
-To the project owner: Please select and commit an official `LICENSE` file into the repository root to finalize open-source licensing.  
-**THE README.MD IS INITIALLY MADE BY US AND IS THEN REWRITTEN BY AI - CHATGPT**
+**Status:** **No `LICENSE` file is currently committed in the repository root.**  
+Open-source licensing terms remain **pending explicit selection and commit by the repository owner**. Until a formal `LICENSE` file is added to the repository, standard copyright defaults apply to unmodified repository contents, while bundled NASA/USGS planetary datasets remain subject to their respective U.S. Government / PDS public data policies.
+
 ---
 
 <p align="center">
-  <em>Developed with passion for Mars exploration by Team AI-Powered • NASA Space Apps Challenge 2026</em>
+  <em>Developed for Mars exploration research &amp; education by Team AI-Powered • NASA Space Apps Challenge 2026</em>
 </p>
