@@ -59,7 +59,7 @@ Most importantly, we put your safe return home after an EVA above all else — b
 - **🪐 Interactive 3D WebGL Globe:** Full 3D Mars globe powered by CesiumJS, projecting topographic relief, landmark overlays, and spherical harmonic gravity anomalies across a true planetary ellipsoid.
 - **🧭 The Best Part: Marswalk Planner:** Point-to-point EVA navigation allowing explorers to set Start (Base/Habitat) and Goal (Science Site) waypoints with instant, terrain-aware route calculation.
 - **🧠 4-Algorithm Pathfinding Showcase:** Select and benchmark four genuine graph and PDE algorithms: **Field D\*** (Ferguson & Stentz continuous-angle interpolation), **Fast Marching Method (FMM)**, **D\* Lite**, and **A\***.
-- **🧑‍🚀 Astronaut Safety & Telemetry HUD:** Real-time life-support simulation calibrated against official NASA xEMU suit specifications (battery capacity, $O_2$ consumption rates, and SWME thermal cooling limits).
+- **🧑‍🚀 Astronaut Safety & Telemetry HUD:** Life-support simulation calibrated against official NASA xEMU suit specifications (battery capacity, $O_2$ consumption rates, and SWME thermal cooling limits).
 - **🌪️ Dynamic Dust Storm Simulation & Avoidance:** Spawns moving 2D Gaussian dust storm cells across the map. If a storm threatens the planned route, the background engine dynamically replans a safe detour without freezing the UI.
 - **🏃 Astronaut Movement Simulation:** Step-by-step interactive simulation animating the astronaut walking along the trajectory, with real-time HUD telemetry updates.
 - **⛰️ Local 3D Terrain on the Spot:** Inspect local elevation relief directly under the astronaut's position to evaluate slope hazards before stepping foot on the slope. *(Note: You are modeled as an idealized point mass on this map, so even if you zoom out to maximum, don't expect an articulated spacesuit avatar!)*
@@ -72,7 +72,7 @@ Most importantly, we put your safe return home after an EVA above all else — b
 <p align="center">
   <img src="docs/assets/02_marswalk_planner_route.png" alt="Marswalk Planner Interface" width="95%">
   <br>
-  <em>Active point-to-point route planning on Mars with real-time elevation cross-section and xEMU telemetry.</em>
+  <em>Active point-to-point route planning on Mars with elevation cross-section and xEMU telemetry.</em>
 </p>
 
 The heart of EVA MARSWALK is its **Multi-Criteria Decision Analysis (MCDA)** routing engine. Given an initial departure habitat and a science destination, the planner solves a continuous multi-dimensional optimization problem:
@@ -136,7 +136,7 @@ EVA MARSWALK does not take algorithmic shortcuts. The system implements four gen
 <p align="center">
   <img src="docs/assets/07_astronaut_simulation_telemetry.png" alt="Astronaut Simulation Telemetry" width="95%">
   <br>
-  <em><strong>Astronaut Movement Simulation:</strong> Real-time life-support telemetry monitoring battery, oxygen, and metabolic burn.</em>
+  <em><strong>Astronaut Movement Simulation:</strong> Life-support telemetry monitoring battery, oxygen, and metabolic burn.</em>
 </p>
 
 ---
@@ -317,12 +317,44 @@ flowchart TD
 
 ---
 
-## 🔭 Future Developments
+## 🚀 Future Development
 
-- **🪟 Helmet-Mounted Holographic Visor Navigation Arrow:** Concept HUD projecting an augmented-reality holographic arrow onto the astronaut's helmet visor, indicating real-time route waypoints and slope hazard alerts.
-- **⛅ Non-Isothermal Atmospheric Model:** Incorporating seasonal solar longitude ($L_s$) pressure oscillations and tropospheric temperature lapse rates over Olympus Mons.
-- **🥽 WebXR & VR Traversal Mode:** Immersive first-person Martian surface walk-throughs using WebXR and VR headsets.
+EVA MARSWALK is envisioned as an expandable platform for future astronaut navigation, autonomous exploration, and scientific research on Mars. The following concepts represent potential future extensions of the project. They are conceptual proposals and are not yet implemented unless explicitly stated otherwise.
 
+### 🪟 Helmet-Mounted Holographic Visor Navigation Arrow
+A conceptual Heads-Up Display (HUD) that projects an augmented-reality navigation arrow onto an astronaut's helmet visor. It would provide real-time route guidance, waypoint directions, and slope hazard alerts directly within the astronaut's field of view.
+
+### ⛅ Non-Isothermal Atmospheric Model
+An enhanced Martian atmospheric model incorporating seasonal solar longitude (\(L_s\))-dependent pressure oscillations and altitude-dependent tropospheric temperature lapse rates, particularly for high-elevation regions such as Olympus Mons.
+
+### 🥽 WebXR & VR Traversal Mode
+An immersive first-person Martian surface exploration experience using WebXR-compatible browsers and virtual reality headsets. Users could virtually traverse terrain, inspect elevation changes, and experience planned astronaut routes.
+
+### 🤖 Autonomous Mars Rover & Vehicle Integration
+Integration with autonomous Mars rovers and robotic exploration vehicles to support coordinated human–robot exploration, remote navigation, terrain assessment, and shared mission planning.
+
+### 🔬 Research-Oriented Route Optimization
+Mission-specific route planning for scientific exploration, prioritizing potential mineral deposits, subsurface or surface water resources, and regions of astrobiological interest, including potential microbial habitats and biosignatures.
+
+### 🏠 Base Management & Return-to-Base Planning
+The ability to establish and manage astronaut bases or habitats as mission reference points. Route planning would account for the return journey, ensuring that astronauts can evaluate whether a destination is reachable while maintaining a feasible return path to their designated base.
+
+### 🗺️ Multi-Research-Site Route Planning
+A multi-destination planning system that generates efficient and risk-aware routes between multiple scientific research sites and geological landmarks. It would optimize visiting order while considering terrain hazards, travel distance, mission objectives, and the return journey.
+
+### 🫧 Oxygen Resupply Stations
+Virtual placement and management of oxygen resupply stations along extended exploration routes. The system would evaluate oxygen consumption, remaining reserves, station locations, and resupply opportunities to support longer-duration surface missions.
+
+### ↩️ Automatic Return Route Recommendation
+An intelligent return-planning mechanism that monitors mission conditions and recommends a route back to the nearest designated base or resupply location when necessary, considering remaining oxygen, astronaut condition, environmental hazards, and available travel time.
+
+### 🛣️ Equatorial Navigation Corridor — Mars Highway Concept
+A proposed large-scale navigation corridor near the Martian equator, connecting multiple geological landmarks and potential exploration sites through relatively accessible terrain.
+
+Rather than assuming that the entire equatorial region is flat or inherently safe, this concept would identify suitable corridors through large-scale elevation analysis, slope assessment, and environmental hazard evaluation. It could eventually serve as a reference network for navigation, regional exploration, and understanding Martian surface conditions.
+
+### 🔭 Advanced Autonomous Exploration & Mission Systems
+Future integration with intelligent mission-planning systems to support autonomous navigation, dynamic route adaptation, environmental monitoring, and coordination between astronauts, rovers, and exploration infrastructure.
 ---
 
 ## 👥 Team & Acknowledgments
