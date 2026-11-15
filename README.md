@@ -532,7 +532,7 @@ Undergraduate students from the **Ho Chi Minh University of Science (VNU-HCM), V
   *(Reference archives collected in this [shared Drive folder](https://drive.google.com/drive/folders/1zfp6GEJgST5CYAE4ZpghkgAJ7kfVaqGo?usp=drive_link), with source PDFs linking back to official releases.)*
 - [**NASA Mars Global Surveyor (MGS) MOLA DEM (`463 m`)**](https://astrogeology.usgs.gov/search/map/mars_mgs_mola_dem_463m)
 - [**USGS Astrogeology Science Center — Viking MDIM 2.1 Colorized Mosaic (`232 m`)**](https://astrogeology.usgs.gov/search/map/mars_viking_colorized_global_mosaic_232m)
-- [Coupled Physical & Mathematical Formulations](#-scientific-data--methodology)
+- [Coupled Physical & Mathematical Formulations](https://drive.google.com/file/d/1t_vwbv1vXuTfuZPi8hqZb3ah0yAhLLj-/view?usp=sharing)
 
 ### Use of Artificial Intelligence (AI) Disclosure
 AI coding and writing tools were used to assist with software engineering productivity and technical documentation drafting/editing. All scientific equations, codebase references, numerical constants, and architectural descriptions presented in this repository were audited directly against the implemented source code and bundled datasets.
