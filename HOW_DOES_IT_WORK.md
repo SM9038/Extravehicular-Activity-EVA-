@@ -60,15 +60,16 @@ Throughout EVA MARSWALK, values fall into four distinct categories:
 
 **Purpose:** Start the local Python HTTP server so all offline 72-tile map pyramids, elevation rasters, and scientific manifests load cleanly in your browser.
 
-**How to use it:**
-1. Open the project folder (`nasa_mars_explorer`) on Windows.
+**How to use it:**  
+**Circumstance 1:**
+1. Open the project folder (`Extravehicular-Activity-EVA-`) on Windows.
 2. Double-click **`desktop/launch_desktop.bat`** (opens the **Mission Portal** `index.html`) or **`launch_2d_map.bat`** (opens directly into `mars_2d_map.html`), or run one of these commands from the project root terminal:
    ```bash
    python desktop/server.py index.html
    ```
    (Omit `index.html` to launch `mars_2d_map.html` directly.)
-3. The server binds to `http://localhost:8080` (automatically incrementing to `8081–8089` if `8080` is busy) and opens your default web browser.
-
+3. The server binds to `http://localhost:8080` (automatically incrementing to `8081–8089` if `8080` is busy) and opens your default web browser.  
+**Circumstance 2:** Open [Website](https://sm9038.github.io/Extravehicular-Activity-EVA-/).
 **Expected result:** The **EVA MARS EXPLORER — MISSION CONTROL** portal appears with two navigation cards: **2D Mars Map** and **3D Globe Explorer**.
 
 ![EVA MARSWALK Mission Portal home screen](docs/assets/tutorial_01_portal_home.png)
@@ -85,7 +86,7 @@ Throughout EVA MARSWALK, values fall into four distinct categories:
 - **Opening System Settings:**
   In **2D Mars Explorer**, click **`Settings`** in the bottom-left footer bar to customize themes, mobility profiles, slope limits, performance mode, and safety view options. *(Note: the Settings modal is available on the 2D Explorer page; visual theme changes chosen there persist across all pages via `localStorage`.)*
 
-**Tips and warnings:** Always launch via `desktop/server.py` (or the `.bat` launchers) rather than opening `.html` files with `file://`. Opening HTML files directly without a local web server prevents browsers from loading manifest JSON and tile datasets.
+**Tips and warnings:** Except for direct Website, always launch via `desktop/server.py` (or the `.bat` launchers) rather than opening `.html` files with `file://`. Opening HTML files directly without a local web server prevents browsers from loading manifest JSON and tile datasets.
 
 ---
 
