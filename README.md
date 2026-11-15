@@ -420,7 +420,11 @@ A route checks both non-negative remaining oxygen (`>= 0 L`) and flags a caution
 
 #### 4. Hydrostatic Atmospheric Pressure & Gravity Conventions
 - **Isothermal Barometric Estimate ([`atmospheric_pressure.js`](geospatial/atmospheric_pressure.js)):** Explicitly tagged `MODELED_ESTIMATE` with $P_0 = 610.0\text{ Pa}$ at $h_0 = 0.0\text{ m}$, $T = 210.0\text{ K}$, $M_{\text{CO}_2} = 0.04401\text{ kg/mol}$, $g = 3.71\text{ m/s}^2$, $R = 8.314462618\text{ J/(mol}\cdot\text{K)}$:
-  $$P(h) = P_0 \exp\!\left(-\frac{M_{\text{CO}_2}\,g\,(h - h_0)}{R\,T}\right) = P_0 \exp\!\left(-\frac{h - h_0}{H}\right), \quad H = \frac{R\,T}{M_{\text{CO}_2}\,g} \approx 10{,}693.7\text{ m}$$
+
+  $$
+  P(h) = P_0 \exp\!\left(-\frac{M_{\text{CO}_2}\,g\,(h - h_0)}{R\,T}\right) = P_0 \exp\!\left(-\frac{h - h_0}{H}\right), \quad H = \frac{R\,T}{M_{\text{CO}_2}\,g} \approx 10{,}693.7\text{ m}
+  $$
+
 - **Three Gravity Reference Conventions:** Locomotion/geodesy uses **$g_{\text{Mars}} = 3.721\text{ m/s}^2$** (`terrain_cost_evaluator.js`, `eva_analytics.js`), hydrostatic atmospheric scale height uses IAU **$3.71\text{ m/s}^2$** (`atmospheric_pressure.js`), and spatial `MRO120G` surface gravity computes local **$g = 3.713606 + \Delta g \times 10^{-5}\text{ m/s}^2$** (`coordinates.js`, `survivability.js`, `mars_3d_map.html`).
 
 #### 5. Dynamic Storm Exclusion & Radiation Proxy ([`dust_storm_simulator.js`](geospatial/dust_storm_simulator.js), `survivability.js`)
