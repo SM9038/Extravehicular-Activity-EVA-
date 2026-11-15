@@ -371,7 +371,8 @@ We express our sincere gratitude to the planetary scientists, engineers, and mis
 - **NASA Extravehicular Activity Services (xEVAS / xEMU) Engineering Teams**  
 Three data above are all stored in this [Drive](https://drive.google.com/drive/folders/1zfp6GEJgST5CYAE4ZpghkgAJ7kfVaqGo?usp=drive_link), noted that there is a link to real sources in PDF files.
 - [**NASA Mars Global Surveyor (MGS) MOLA Team**](https://astrogeology.usgs.gov/search/map/mars_mgs_mola_dem_463m)
-- [**USGS Astrogeology Science Center (Viking MDIM 2.1)**](https://astrogeology.usgs.gov/search/map/mars_viking_colorized_global_mosaic_232m)
+- [**USGS Astrogeology Science Center (Viking MDIM 2.1)**](https://astrogeology.usgs.gov/search/map/mars_viking_colorized_global_mosaic_232m)  
+- [The Formulas we used](https://drive.google.com/drive/folders/1qmaZEgfylcoY5k9zOefDfHjus6xiIXdv?usp=drive_link)
 
 ---
 
